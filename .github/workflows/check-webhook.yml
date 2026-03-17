@@ -16,13 +16,15 @@ jobs:
         run: |
           WEBHOOK_INFO=$(curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/getWebhookInfo")
           CURRENT_URL=$(echo "$WEBHOOK_INFO" | python3 -c "import sys, json; print(json.load(sys.stdin)['result'].get('url', ''))")
+          EXPECTED_URL="${{ secrets.SITE_URL }}/.netlify/functions/telegram-webhook"
 
           echo "current_url=$CURRENT_URL" >> $GITHUB_OUTPUT
+          echo "expected_url=$EXPECTED_URL" >> $GITHUB_OUTPUT
           echo "Current webhook URL: $CURRENT_URL"
-          echo "Expected webhook URL: ${{ secrets.SITE_URL }}/.netlify/functions/telegram-webhook"
+          echo "Expected webhook URL: $EXPECTED_URL"
 
       - name: Reconfigure webhook if needed
-        if: steps.check.outputs.current_url != format('{0}/.netlify/functions/telegram-webhook', secrets.SITE_URL)
+        if: steps.check.outputs.current_url != steps.check.outputs.expected_url
         run: |
           echo "Webhook is not configured correctly. Fixing..."
 
