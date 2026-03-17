@@ -26,6 +26,9 @@ const getSupabase = (): SupabaseClient => getSupabaseAdmin();
 // Team ID para filtrar datos (cada bot atiende un solo equipo)
 const TEAM_ID = process.env.TEAM_ID;
 
+// Chat ID del grupo autorizado
+const ALLOWED_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
 // Rate limiting: máximo 3 pedidos cada 10 minutos por usuario
 const RATE_LIMIT_MAX_REQUESTS = 3;
 const RATE_LIMIT_WINDOW_MINUTES = 10;
@@ -274,6 +277,35 @@ const conversationMessages = {
 // ===== Fin funciones de conversación =====
 
 /**
+ * Auto-registra un usuario del grupo autorizado con rol por defecto
+ */
+async function autoRegisterUser(
+  from: { id: number; first_name: string; username?: string },
+  supabase: SupabaseClient
+): Promise<User> {
+  const { data, error } = await supabase
+    .from('users')
+    .upsert(
+      {
+        telegram_id: from.id.toString(),
+        telegram_username: from.username || null,
+        name: from.first_name,
+        role: 'analyst',
+        team_id: TEAM_ID || null,
+      },
+      { onConflict: 'telegram_id' }
+    )
+    .select()
+    .single();
+
+  if (error || !data) {
+    throw new Error('Failed to auto-register user');
+  }
+
+  return data as User;
+}
+
+/**
  * Valida la firma del webhook de Telegram
  * https://core.telegram.org/bots/api#setwebhook
  */
@@ -360,17 +392,25 @@ export const handler: Handler = async (event) => {
     const userId = message.from.id;
     const text = message.text.trim();
 
-    // Verificar que el usuario esté autorizado
-    const user = await getUserByTelegramId(userId.toString(), getSupabase());
+    // Verificar que el mensaje viene del grupo autorizado
+    if (ALLOWED_CHAT_ID && chatId.toString() !== ALLOWED_CHAT_ID) {
+      if (message.chat.type === 'private') {
+        // En chat privado, solo permitir usuarios registrados
+        const privateUser = await getUserByTelegramId(userId.toString(), getSupabase());
+        if (!privateUser) {
+          await sendMessage(chatId, '❌ No estás autorizado. Este bot solo funciona en el grupo del equipo.');
+          return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+        }
+      } else {
+        // Grupo no autorizado - ignorar silenciosamente
+        return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+      }
+    }
+
+    // Buscar usuario o auto-registrarlo si está en el grupo autorizado
+    let user = await getUserByTelegramId(userId.toString(), getSupabase());
     if (!user) {
-      await sendMessage(
-        chatId,
-        '❌ No estás autorizado para usar este bot. Contacta al administrador.'
-      );
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ ok: true }),
-      };
+      user = await autoRegisterUser(message.from, getSupabase());
     }
 
     // Verificar si hay una conversación activa
@@ -930,11 +970,19 @@ async function handleCallbackQuery(callbackQuery: TelegramCallbackQuery) {
     return;
   }
 
-  // Verificar que el usuario esté autorizado
-  const user = await getUserByTelegramId(userId.toString(), getSupabase());
+  // Verificar autorización: grupo correcto o usuario registrado
+  if (ALLOWED_CHAT_ID && chatId.toString() !== ALLOWED_CHAT_ID) {
+    const cbUser = await getUserByTelegramId(userId.toString(), getSupabase());
+    if (!cbUser) {
+      await answerCallbackQuery(callbackQuery.id, '❌ No autorizado', true);
+      return;
+    }
+  }
+
+  // Buscar usuario o auto-registrarlo
+  let user = await getUserByTelegramId(userId.toString(), getSupabase());
   if (!user) {
-    await answerCallbackQuery(callbackQuery.id, '❌ No autorizado', true);
-    return;
+    user = await autoRegisterUser(callbackQuery.from, getSupabase());
   }
 
   try {
