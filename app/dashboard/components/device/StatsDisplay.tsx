@@ -44,7 +44,7 @@ export default function StatsDisplay({
 
   return (
     <ScreenDisplay>
-      <div className="flex flex-col gap-3" role="region" aria-label="Estadísticas de pedidos">
+      <div className="flex flex-col gap-3" role="region" aria-label="Estadísticas de pendientes">
         {/* Fila superior - Filtros por persona + Collapse toggle */}
         <div className="flex items-center justify-between">
           <div
@@ -137,16 +137,16 @@ export default function StatsDisplay({
                 aria-live="polite"
                 aria-atomic="true"
               >
-                <StatItem label="TOTAL" value={total} color="cyan" description="pedidos totales" />
-                <StatItem label="ACTIVOS" value={active} color="orange" description="pedidos activos" />
-                <StatItem label="LISTOS" value={completed} color="green" description="pedidos completados" />
+                <StatItem label="TOTAL" value={total} color="cyan" description="pendientes totales" />
+                <StatItem label="ACTIVOS" value={active} color="orange" description="pendientes activos" />
+                <StatItem label="LISTOS" value={completed} color="green" description="pendientes completados" />
               </div>
 
               <LCDDivider />
 
               {/* Fila inferior - Info adicional */}
               <div className="flex items-center justify-between pt-3">
-                <div className="flex items-center gap-2" role="status" aria-label={`${urgent} pedidos urgentes`}>
+                <div className="flex items-center gap-2" role="status" aria-label={`${urgent} pendientes urgentes`}>
                   <LCDLabel color="orange">URG</LCDLabel>
                   <LCDNumber value={urgent.toString().padStart(2, '0')} color="orange" size="sm" />
                 </div>
@@ -220,7 +220,7 @@ function TeamButton({
       className="relative flex flex-col items-center gap-0.5 min-w-[44px]"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label={`Filtrar por ${fullName}${count > 0 ? `, ${count} pedidos activos` : ''}`}
+      aria-label={`Filtrar por ${fullName}${count > 0 ? `, ${count} pendientes activos` : ''}`}
       aria-pressed={active}
       type="button"
     >

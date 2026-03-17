@@ -93,7 +93,7 @@ export default function DashboardPage() {
   const { requests, loading, error, isConnected, refresh } = useRealtimeRequests({
     onInsert: (req) => {
       playNotification();
-      showToast('notification', 'Nuevo pedido', `${req.client}: ${req.description.slice(0, 50)}...`);
+      showToast('notification', 'Nuevo pendiente', `${req.client}: ${req.description.slice(0, 50)}...`);
     },
     onUpdate: () => {
       playWhoosh();
@@ -184,10 +184,10 @@ export default function DashboardPage() {
 
       if (error) throw error;
       playSuccess();
-      showToast('success', 'Completado!', 'El pedido ha sido marcado como completado');
+      showToast('success', 'Completado!', 'El pendiente ha sido marcado como completado');
     } catch (err) {
       console.error('Error completing request:', err);
-      showToast('error', 'Error', 'No se pudo completar el pedido');
+      showToast('error', 'Error', 'No se pudo completar el pendiente');
     }
   }
 
@@ -198,7 +198,7 @@ export default function DashboardPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Seguro que deseas eliminar este pedido?')) return;
+    if (!confirm('Seguro que deseas eliminar este pendiente?')) return;
 
     try {
       let query = supabase.from('requests').delete().eq('id', id);
@@ -210,10 +210,10 @@ export default function DashboardPage() {
       const { error } = await query;
 
       if (error) throw error;
-      showToast('info', 'Eliminado', 'El pedido ha sido eliminado');
+      showToast('info', 'Eliminado', 'El pendiente ha sido eliminado');
     } catch (err) {
       console.error('Error deleting request:', err);
-      showToast('error', 'Error', 'No se pudo eliminar el pedido');
+      showToast('error', 'Error', 'No se pudo eliminar el pendiente');
     }
   }
 
@@ -334,7 +334,7 @@ export default function DashboardPage() {
             {team?.name?.toUpperCase() || 'PEDIDOS'}
           </h1>
           <p className="text-[10px] uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--footer-text)' }}>
-            Sistema de Pedidos v2.0
+            Sistema de Pendientes v2.0
             <span className="flex items-center gap-1">
               {isConnected ? (
                 <motion.span
@@ -360,7 +360,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main content area - WCAG landmark */}
-      <main id="main-content" role="main" aria-label="Panel de pedidos">
+      <main id="main-content" role="main" aria-label="Panel de pendientes">
       {/* LCD Stats Display */}
       <div className="px-4 py-2">
         {loading ? (
@@ -411,11 +411,11 @@ export default function DashboardPage() {
 
         {/* Action buttons */}
         <div className="flex items-center gap-2" role="group" aria-label="Acciones principales">
-          <Button3D variant="black" onClick={handleToggleSearch} aria-label="Buscar pedidos (Alt+K)" aria-expanded={isSearchOpen}>
+          <Button3D variant="black" onClick={handleToggleSearch} aria-label="Buscar pendientes (Alt+K)" aria-expanded={isSearchOpen}>
             <Search size={14} aria-hidden="true" />
             <span className="sr-only">Buscar</span>
           </Button3D>
-          <Button3D variant="orange" onClick={handleOpenNewModal} aria-label="Crear nuevo pedido (Alt+N)">
+          <Button3D variant="orange" onClick={handleOpenNewModal} aria-label="Crear nuevo pendiente (Alt+N)">
             <Plus size={14} aria-hidden="true" />
             NUEVO
           </Button3D>
@@ -436,7 +436,7 @@ export default function DashboardPage() {
             }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95, y: 1 }}
-            aria-label="Ver historial de pedidos completados"
+            aria-label="Ver historial de pendientes completados"
           >
             <History size={16} className="text-gray-400" aria-hidden="true" />
           </motion.button>
@@ -626,8 +626,8 @@ export default function DashboardPage() {
           {!loading && activeRequests.length === 0 && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="lcd-screen p-8 text-center" role="status" aria-live="polite">
               <p className="lcd-number text-lg mb-2">NO DATA</p>
-              <p className="text-[#949494] text-xs mb-4">No hay pedidos activos</p>
-              <Button3D variant="orange" onClick={handleOpenNewModal} aria-label="Crear el primer pedido">CREAR PRIMER PEDIDO</Button3D>
+              <p className="text-[#949494] text-xs mb-4">No hay pendientes activos</p>
+              <Button3D variant="orange" onClick={handleOpenNewModal} aria-label="Crear el primer pendiente">CREAR PRIMER PENDIENTE</Button3D>
             </motion.div>
           )}
 
@@ -684,7 +684,7 @@ export default function DashboardPage() {
         onClose={handleCloseModal}
         onSuccess={() => {
           playSuccess();
-          showToast('success', editingRequest ? 'Actualizado!' : 'Creado!', 'El pedido ha sido guardado');
+          showToast('success', editingRequest ? 'Actualizado!' : 'Creado!', 'El pendiente ha sido guardado');
         }}
         editingRequest={editingRequest}
       />

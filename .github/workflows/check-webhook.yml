@@ -34,6 +34,26 @@ jobs:
 
           echo "Webhook configured!"
 
+      - name: Register bot commands menu
+        run: |
+          echo "Registering bot commands..."
+          RESULT=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/setMyCommands" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "commands": [
+                {"command": "nuevopendiente", "description": "Crear un nuevo pendiente"},
+                {"command": "ver", "description": "Ver todos los pendientes activos"},
+                {"command": "mios", "description": "Ver mis pendientes asignados"},
+                {"command": "completar", "description": "Marcar como completado"},
+                {"command": "hoy", "description": "Pendientes que vencen hoy"},
+                {"command": "semana", "description": "Pendientes de esta semana"},
+                {"command": "urgente", "description": "Pendientes urgentes"},
+                {"command": "menu", "description": "Abrir menú principal"},
+                {"command": "ayuda", "description": "Ver todos los comandos"}
+              ]
+            }')
+          echo "Commands registration result: $RESULT"
+
       - name: Verify webhook
         run: |
           WEBHOOK_INFO=$(curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/getWebhookInfo")

@@ -55,7 +55,7 @@ export function useRealtimeRequests(
       setRequests(data || []);
     } catch (err) {
       console.error('Error fetching requests:', err);
-      setError('Error al cargar los pedidos');
+      setError('Error al cargar los pendientes');
     } finally {
       setLoading(false);
     }

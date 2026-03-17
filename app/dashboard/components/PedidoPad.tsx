@@ -81,7 +81,7 @@ export default function PedidoPad({
       whileHover={!isDragging ? "hover" : undefined}
       whileTap={!isDragging ? "tap" : undefined}
       layout
-      aria-label={`Pedido de ${request.client}: ${request.description.slice(0, 50)}${request.description.length > 50 ? '...' : ''}`}
+      aria-label={`Pendiente de ${request.client}: ${request.description.slice(0, 50)}${request.description.length > 50 ? '...' : ''}`}
     >
       {/* Drag handle */}
       {isDraggable && !isCompleted && (

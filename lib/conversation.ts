@@ -93,13 +93,13 @@ export async function clearConversationState(
  * Mensajes del flujo conversacional
  */
 export const conversationMessages = {
-  start: '📝 *Nuevo pedido para el equipo*\n\n¿Para qué *cliente/cuenta*?',
+  start: '📝 *Nuevo pendiente para el equipo*\n\n¿Para qué *cliente/cuenta*?',
 
   client: (client: string) =>
-    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pedido)`,
+    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pendiente)`,
 
   description: (desc: string) =>
-    `✅ Pedido: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
+    `✅ Pendiente: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
 
   requester: (requester: string) =>
     `✅ Solicitante: ${requester}\n\n¿Fecha de entrega?\nPuedes usar:\n• Fecha: "25/12" o "25/12/2024"\n• Relativo: "hoy", "mañana", "en 3 días"`,
@@ -112,10 +112,10 @@ export const conversationMessages = {
     const name = parts[0]?.trim() || data.requester_name;
     const role = parts[1]?.trim() || '';
 
-    return `✅ *Pedido creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPedido: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pedido ha sido guardado y todos pueden verlo con /ver`;
+    return `✅ *Pendiente creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPendiente: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pendiente ha sido guardado y todos pueden verlo con /ver`;
   },
 
-  cancel: '❌ Pedido cancelado. Usa /nuevopedido cuando quieras crear uno nuevo.',
+  cancel: '❌ Pendiente cancelado. Usa /nuevopendiente cuando quieras crear uno nuevo.',
 
   error: '⚠️ No entendí esa respuesta. Por favor intenta de nuevo.',
 

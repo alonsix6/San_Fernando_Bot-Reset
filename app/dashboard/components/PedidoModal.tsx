@@ -177,7 +177,7 @@ export default function PedidoModal({
       resetForm();
     } catch (err) {
       console.error('Error saving request:', err);
-      setErrors({ submit: 'Error al guardar el pedido. Intenta de nuevo.' });
+      setErrors({ submit: 'Error al guardar el pendiente. Intenta de nuevo.' });
     } finally {
       setLoading(false);
     }

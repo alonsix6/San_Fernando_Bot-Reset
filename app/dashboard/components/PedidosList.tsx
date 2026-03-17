@@ -19,7 +19,7 @@ export default function PedidosList({
   title,
   icon,
   requests,
-  emptyMessage = 'No hay pedidos en esta categoria',
+  emptyMessage = 'No hay pendientes en esta categoria',
   emptyIcon,
   onComplete,
   onEdit,

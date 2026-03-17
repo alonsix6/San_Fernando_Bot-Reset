@@ -89,7 +89,7 @@ export default function Home() {
                 className="text-sm uppercase tracking-[0.2em] font-medium"
                 style={{ color: '#666' }}
               >
-                Sistema de Pedidos
+                Sistema de Pendientes
               </p>
             </motion.div>
           </div>

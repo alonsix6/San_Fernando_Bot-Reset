@@ -1,7 +1,7 @@
 /**
  * Script de recordatorio diario para el bot de Telegram
  * Se ejecuta diariamente a las 9AM Lima (14:00 UTC) via GitHub Actions
- * Envía un resumen de pedidos urgentes al grupo de Telegram
+ * Envía un resumen de pendientes urgentes al grupo de Telegram
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -83,7 +83,7 @@ async function main() {
   try {
     console.log('🔔 Iniciando recordatorio diario...');
 
-    // Obtener pedidos activos (filtrados por equipo)
+    // Obtener pendientes activos (filtrados por equipo)
     let query = supabase
       .from('requests')
       .select('*')
@@ -101,11 +101,11 @@ async function main() {
     }
 
     if (!requests || requests.length === 0) {
-      console.log('✅ No hay pedidos activos. No se envía recordatorio.');
+      console.log('✅ No hay pendientes activos. No se envía recordatorio.');
       return;
     }
 
-    // Clasificar pedidos por urgencia
+    // Clasificar pendientes por urgencia
     const now = new Date();
     const urgent = requests.filter((r) => {
       const daysLeft = differenceInDays(parseISO(r.deadline), now);
@@ -137,9 +137,9 @@ async function main() {
 
     // Construir mensaje
     let message = `🔔 *Buenos días ${teamName}!*\n\n`;
-    message += `📊 *PEDIDOS ACTIVOS (${requests.length})*\n\n`;
+    message += `📊 *PENDIENTES ACTIVOS (${requests.length})*\n\n`;
 
-    // Pedidos urgentes (vencen hoy o atrasados)
+    // Pendientes urgentes (vencen hoy o atrasados)
     if (urgent.length > 0) {
       message += `🔴 *URGENTE - Vence HOY o atrasado* (${urgent.length})\n\n`;
       urgent.forEach((req) => {
@@ -151,7 +151,7 @@ async function main() {
       });
     }
 
-    // Pedidos próximos (1-2 días)
+    // Pendientes próximos (1-2 días)
     if (soon.length > 0) {
       message += `🟡 *PRÓXIMOS 2 DÍAS* (${soon.length})\n\n`;
       soon.forEach((req) => {
@@ -162,7 +162,7 @@ async function main() {
       });
     }
 
-    // Pedidos de esta semana
+    // Pendientes de esta semana
     if (thisWeek.length > 0) {
       message += `🟢 *ESTA SEMANA* (${thisWeek.length})\n\n`;
       thisWeek.slice(0, 5).forEach((req) => {
@@ -178,7 +178,7 @@ async function main() {
 
     message += '---\n';
     message += '💡 Usa /completar para marcar listos\n';
-    message += '📝 /nuevopedido para agregar más';
+    message += '📝 /nuevopendiente para agregar más';
 
     // Enviar mensaje
     console.log('📤 Enviando recordatorio a Telegram...');
@@ -187,7 +187,7 @@ async function main() {
 
     // Log resumen
     console.log(`\n📊 Resumen:`);
-    console.log(`   - Pedidos urgentes: ${urgent.length}`);
+    console.log(`   - Pendientes urgentes: ${urgent.length}`);
     console.log(`   - Próximos 2 días: ${soon.length}`);
     console.log(`   - Esta semana: ${thisWeek.length}`);
     console.log(`   - Total activos: ${requests.length}`);

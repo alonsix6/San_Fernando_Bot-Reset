@@ -3,13 +3,13 @@ import "./globals.css";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
-  title: "Reset R&A - Pedidos",
-  description: "Sistema de gestión de pedidos para el equipo de Research & Analytics de Reset",
+  title: "Reset R&A - Pendientes",
+  description: "Sistema de gestión de pendientes para el equipo de Research & Analytics de Reset",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Reset Pedidos",
+    title: "Reset Pendientes",
   },
   formatDetection: {
     telephone: false,

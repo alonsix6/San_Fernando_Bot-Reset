@@ -29,7 +29,7 @@ const TEAM_ID = process.env.TEAM_ID;
 // Chat ID del grupo autorizado
 const ALLOWED_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-// Rate limiting: máximo 3 pedidos cada 10 minutos por usuario
+// Rate limiting: máximo 3 pendientes cada 10 minutos por usuario
 const RATE_LIMIT_MAX_REQUESTS = 3;
 const RATE_LIMIT_WINDOW_MINUTES = 10;
 
@@ -174,7 +174,7 @@ function isConversationExpired(state: ConversationState): boolean {
 }
 
 /**
- * Verifica rate limiting para /nuevopedido
+ * Verifica rate limiting para /nuevopendiente
  */
 async function checkRateLimit(userId: string, supabase: SupabaseClient): Promise<{ allowed: boolean; remaining: number }> {
   const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MINUTES * 60 * 1000).toISOString();
@@ -226,13 +226,13 @@ async function getTeamMemberIds(supabase: SupabaseClient): Promise<Record<string
 }
 
 const conversationMessages = {
-  start: '📝 *Nuevo pedido para el equipo*\n\n¿Para qué *cliente/cuenta*?',
+  start: '📝 *Nuevo pendiente para el equipo*\n\n¿Para qué *cliente/cuenta*?',
 
   client: (client: string) =>
-    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pedido)`,
+    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pendiente)`,
 
   description: (desc: string) =>
-    `✅ Pedido: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
+    `✅ Pendiente: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
 
   requester: (requester: string) =>
     `✅ Solicitante: ${requester}\n\n¿Fecha de entrega?\nPuedes usar:\n• Fecha: "25/12" o "25/12/2024"\n• Relativo: "hoy", "mañana", "en 3 días"`,
@@ -256,10 +256,10 @@ const conversationMessages = {
     const name = parts[0]?.trim() || data.requester_name;
     const role = parts[1]?.trim() || '';
 
-    return `✅ *Pedido creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPedido: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pedido ha sido guardado y todos pueden verlo con /ver`;
+    return `✅ *Pendiente creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPendiente: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pendiente ha sido guardado y todos pueden verlo con /ver`;
   },
 
-  cancel: '❌ Pedido cancelado. Usa /nuevopedido cuando quieras crear uno nuevo.',
+  cancel: '❌ Pendiente cancelado. Usa /nuevopendiente cuando quieras crear uno nuevo.',
 
   error: '⚠️ No entendí esa respuesta. Por favor intenta de nuevo.',
 
@@ -268,10 +268,10 @@ const conversationMessages = {
   invalidAssignment: (max: number) =>
     `⚠️ Por favor responde con un número del 1 al ${max}.`,
 
-  conversationExpired: '⏰ Tu sesión ha expirado por inactividad. Usa /nuevopedido para comenzar de nuevo.',
+  conversationExpired: '⏰ Tu sesión ha expirado por inactividad. Usa /nuevopendiente para comenzar de nuevo.',
 
   rateLimited: (remaining: number) =>
-    `⚠️ Has alcanzado el límite de ${RATE_LIMIT_MAX_REQUESTS} pedidos en ${RATE_LIMIT_WINDOW_MINUTES} minutos. Espera un momento antes de crear más pedidos.`,
+    `⚠️ Has alcanzado el límite de ${RATE_LIMIT_MAX_REQUESTS} pendientes en ${RATE_LIMIT_WINDOW_MINUTES} minutos. Espera un momento antes de crear más pendientes.`,
 };
 
 // ===== Fin funciones de conversación =====
@@ -458,6 +458,7 @@ export const handler: Handler = async (event) => {
           );
           break;
 
+        case '/nuevopendiente':
         case '/nuevopedido':
           await handleNuevoPedidoCommand(chatId, userId.toString(), user.id);
           break;
@@ -471,7 +472,7 @@ export const handler: Handler = async (event) => {
             await clearConversationState(chatId.toString(), userId.toString(), getSupabase());
             await sendMessage(chatId, conversationMessages.cancel);
           } else {
-            await sendMessage(chatId, '🤷 No hay ningún pedido en proceso para cancelar.');
+            await sendMessage(chatId, '🤷 No hay ningún pendiente en proceso para cancelar.');
           }
           break;
 
@@ -520,7 +521,7 @@ export const handler: Handler = async (event) => {
 };
 
 /**
- * Comando /nuevopedido - Inicia el flujo conversacional
+ * Comando /nuevopendiente - Inicia el flujo conversacional
  */
 async function handleNuevoPedidoCommand(chatId: number, userId: string, userDbId: string) {
   // Verificar rate limit
@@ -546,7 +547,7 @@ async function handleNuevoPedidoCommand(chatId: number, userId: string, userDbId
 }
 
 /**
- * Maneja el flujo conversacional para crear un pedido
+ * Maneja el flujo conversacional para crear un pendiente
  */
 async function handleConversationFlow(
   chatId: number,
@@ -652,7 +653,7 @@ async function handleConversationFlow(
       }
       // else: último número = "Sin asignar" (assignedTo queda null)
 
-      // Guardar el pedido en la DB
+      // Guardar el pendiente en la DB
       const priority = calculatePriority(requestData.deadline!);
       const emoji = getPriorityEmoji(priority);
 
@@ -672,7 +673,7 @@ async function handleConversationFlow(
         });
 
       if (error) {
-        await sendMessage(chatId, '❌ Error al crear el pedido. Por favor intenta de nuevo.');
+        await sendMessage(chatId, '❌ Error al crear el pendiente. Por favor intenta de nuevo.');
         await clearConversationState(chatId.toString(), userId, getSupabase());
         return;
       }
@@ -702,7 +703,7 @@ async function handleConversationFlow(
 
       const selectedRequestId = requestIds[selectionNum - 1];
 
-      // Actualizar el pedido a completado
+      // Actualizar el pendiente a completado
       const { data: updatedRequest, error: updateError } = await getSupabase()
         .from('requests')
         .update({
@@ -714,7 +715,7 @@ async function handleConversationFlow(
         .single();
 
       if (updateError) {
-        await sendMessage(chatId, '❌ Error al completar el pedido. Intenta de nuevo.');
+        await sendMessage(chatId, '❌ Error al completar el pendiente. Intenta de nuevo.');
         await clearConversationState(chatId.toString(), userId, getSupabase());
         return;
       }
@@ -725,14 +726,14 @@ async function handleConversationFlow(
       // Enviar confirmación
       await sendMessage(
         chatId,
-        `✅ *Pedido completado!*\n\n${updatedRequest.client} - ${updatedRequest.description}\n\n🎉 ¡Buen trabajo!`
+        `✅ *Pendiente completado!*\n\n${updatedRequest.client} - ${updatedRequest.description}\n\n🎉 ¡Buen trabajo!`
       );
       break;
   }
 }
 
 /**
- * Comando /completar - Marcar pedido como completado
+ * Comando /completar - Marcar pendiente como completado
  */
 async function handleCompletarCommand(chatId: number, userId: string) {
   let completarQuery = getSupabase()
@@ -749,16 +750,16 @@ async function handleCompletarCommand(chatId: number, userId: string) {
   const { data: requests, error } = await completarQuery;
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener los pedidos. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener los pendientes. Intenta de nuevo.');
     return;
   }
 
   if (!requests || requests.length === 0) {
-    await sendMessage(chatId, '📭 No hay pedidos activos para completar.');
+    await sendMessage(chatId, '📭 No hay pendientes activos para completar.');
     return;
   }
 
-  // Guardar los IDs de los pedidos en el estado de conversación
+  // Guardar los IDs de los pendientes en el estado de conversación
   const requestIds = requests.map((req: Request) => req.id);
   await saveConversationState(
     {
@@ -770,8 +771,8 @@ async function handleCompletarCommand(chatId: number, userId: string) {
     getSupabase()
   );
 
-  // Mostrar lista de pedidos con números
-  let message = '📝 *Pedidos activos*\n\nResponde con el número del pedido a completar:\n\n';
+  // Mostrar lista de pendientes con números
+  let message = '📝 *Pendientes activos*\n\nResponde con el número del pendiente a completar:\n\n';
   requests.forEach((req: Request, index: number) => {
     const emoji = getPriorityEmoji(req.priority);
     message += `*${index + 1}.* ${emoji} ${req.client} - ${req.description.substring(0, 40)}${req.description.length > 40 ? '...' : ''}\n`;
@@ -782,7 +783,7 @@ async function handleCompletarCommand(chatId: number, userId: string) {
 }
 
 /**
- * Comando /ver - Muestra todos los pedidos activos
+ * Comando /ver - Muestra todos los pendientes activos
  */
 async function handleVerCommand(chatId: number) {
   let verQuery = getSupabase()
@@ -798,21 +799,21 @@ async function handleVerCommand(chatId: number) {
   const { data: requests, error } = await verQuery;
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener los pedidos. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener los pendientes. Intenta de nuevo.');
     return;
   }
 
   if (!requests || requests.length === 0) {
-    await sendMessage(chatId, '📭 No hay pedidos activos en este momento.');
+    await sendMessage(chatId, '📭 No hay pendientes activos en este momento.');
     return;
   }
 
-  const message = formatRequestsList(requests as Request[], 'Pedidos Activos');
+  const message = formatRequestsList(requests as Request[], 'Pendientes Activos');
   await sendMessage(chatId, message);
 }
 
 /**
- * Comando /mios - Muestra pedidos asignados al usuario
+ * Comando /mios - Muestra pendientes asignados al usuario
  */
 async function handleMiosCommand(chatId: number, userId: string) {
   const { data: requests, error } = await getSupabase()
@@ -823,21 +824,21 @@ async function handleMiosCommand(chatId: number, userId: string) {
     .order('deadline', { ascending: true });
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener tus pedidos. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener tus pendientes. Intenta de nuevo.');
     return;
   }
 
   if (!requests || requests.length === 0) {
-    await sendMessage(chatId, '📭 No tienes pedidos asignados en este momento.');
+    await sendMessage(chatId, '📭 No tienes pendientes asignados en este momento.');
     return;
   }
 
-  const message = formatRequestsList(requests as Request[], 'Mis Pedidos');
+  const message = formatRequestsList(requests as Request[], 'Mis Pendientes');
   await sendMessage(chatId, message);
 }
 
 /**
- * Comando /hoy - Pedidos que vencen hoy
+ * Comando /hoy - Pendientes que vencen hoy
  */
 async function handleHoyCommand(chatId: number) {
   let hoyQuery = getSupabase()
@@ -852,32 +853,32 @@ async function handleHoyCommand(chatId: number) {
   const { data: requests, error } = await hoyQuery;
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener los pedidos. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener los pendientes. Intenta de nuevo.');
     return;
   }
 
   if (!requests) {
-    await sendMessage(chatId, '📭 No hay pedidos que venzan hoy.');
+    await sendMessage(chatId, '📭 No hay pendientes que venzan hoy.');
     return;
   }
 
-  // Filtrar pedidos que vencen hoy
+  // Filtrar pendientes que vencen hoy
   const today = requests.filter((r: Request) => {
     const daysLeft = differenceInDays(parseISO(r.deadline), new Date());
     return daysLeft === 0;
   });
 
   if (today.length === 0) {
-    await sendMessage(chatId, '📭 No hay pedidos que venzan hoy.');
+    await sendMessage(chatId, '📭 No hay pendientes que venzan hoy.');
     return;
   }
 
-  const message = formatRequestsList(today as Request[], 'Pedidos que vencen HOY');
+  const message = formatRequestsList(today as Request[], 'Pendientes que vencen HOY');
   await sendMessage(chatId, message);
 }
 
 /**
- * Comando /semana - Pedidos de esta semana
+ * Comando /semana - Pendientes de esta semana
  */
 async function handleSemanaCommand(chatId: number) {
   let semanaQuery = getSupabase()
@@ -892,32 +893,32 @@ async function handleSemanaCommand(chatId: number) {
   const { data: requests, error } = await semanaQuery;
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener los pedidos. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener los pendientes. Intenta de nuevo.');
     return;
   }
 
   if (!requests) {
-    await sendMessage(chatId, '📭 No hay pedidos para esta semana.');
+    await sendMessage(chatId, '📭 No hay pendientes para esta semana.');
     return;
   }
 
-  // Filtrar pedidos que vencen en los próximos 7 días
+  // Filtrar pendientes que vencen en los próximos 7 días
   const thisWeek = requests.filter((r: Request) => {
     const daysLeft = differenceInDays(parseISO(r.deadline), new Date());
     return daysLeft >= 0 && daysLeft <= 7;
   });
 
   if (thisWeek.length === 0) {
-    await sendMessage(chatId, '📭 No hay pedidos para esta semana.');
+    await sendMessage(chatId, '📭 No hay pendientes para esta semana.');
     return;
   }
 
-  const message = formatRequestsList(thisWeek as Request[], 'Pedidos de esta semana');
+  const message = formatRequestsList(thisWeek as Request[], 'Pendientes de esta semana');
   await sendMessage(chatId, message);
 }
 
 /**
- * Comando /urgente - Pedidos urgentes (< 2 días)
+ * Comando /urgente - Pendientes urgentes (< 2 días)
  */
 async function handleUrgenteCommand(chatId: number) {
   let urgenteQuery = getSupabase()
@@ -932,27 +933,27 @@ async function handleUrgenteCommand(chatId: number) {
   const { data: requests, error } = await urgenteQuery;
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener los pedidos. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener los pendientes. Intenta de nuevo.');
     return;
   }
 
   if (!requests) {
-    await sendMessage(chatId, '📭 No hay pedidos urgentes.');
+    await sendMessage(chatId, '📭 No hay pendientes urgentes.');
     return;
   }
 
-  // Filtrar pedidos urgentes (vencen en menos de 2 días o ya vencieron)
+  // Filtrar pendientes urgentes (vencen en menos de 2 días o ya vencieron)
   const urgent = requests.filter((r: Request) => {
     const daysLeft = differenceInDays(parseISO(r.deadline), new Date());
     return daysLeft < 2;
   });
 
   if (urgent.length === 0) {
-    await sendMessage(chatId, '✅ No hay pedidos urgentes. ¡Todo bajo control!');
+    await sendMessage(chatId, '✅ No hay pendientes urgentes. ¡Todo bajo control!');
     return;
   }
 
-  const message = formatRequestsList(urgent as Request[], 'Pedidos URGENTES');
+  const message = formatRequestsList(urgent as Request[], 'Pendientes URGENTES');
   await sendMessage(chatId, message);
 }
 
@@ -1022,7 +1023,7 @@ async function handleCallbackQuery(callbackQuery: TelegramCallbackQuery) {
 
       await answerCallbackQuery(callbackQuery.id);
 
-      // Obtener el pedido
+      // Obtener el pendiente
       const { data: request } = await getSupabase()
         .from('requests')
         .select('*')
@@ -1030,7 +1031,7 @@ async function handleCallbackQuery(callbackQuery: TelegramCallbackQuery) {
         .single();
 
       if (request && messageId) {
-        const confirmMessage = `¿Completar este pedido?\n\n*${request.client}*\n${request.description}`;
+        const confirmMessage = `¿Completar este pendiente?\n\n*${request.client}*\n${request.description}`;
         const buttons = createCompleteConfirmButtons(requestId);
         await editMessageText(chatId, messageId, confirmMessage, 'Markdown', buttons);
       }
@@ -1061,7 +1062,7 @@ async function handleCallbackQuery(callbackQuery: TelegramCallbackQuery) {
         await editMessageText(
           chatId,
           messageId,
-          `✅ *Pedido completado!*\n\n${updatedRequest.client} - ${updatedRequest.description}\n\n🎉 ¡Buen trabajo!`,
+          `✅ *Pendiente completado!*\n\n${updatedRequest.client} - ${updatedRequest.description}\n\n🎉 ¡Buen trabajo!`,
           'Markdown',
           createMainMenuButtons()
         );
@@ -1078,7 +1079,7 @@ async function handleCallbackQuery(callbackQuery: TelegramCallbackQuery) {
 
       await answerCallbackQuery(callbackQuery.id);
 
-      // Obtener detalles del pedido
+      // Obtener detalles del pendiente
       const { data: request } = await getSupabase()
         .from('requests')
         .select('*')

@@ -167,7 +167,7 @@ export async function editMessageText(
 }
 
 /**
- * Crea botones inline para acciones rápidas en un pedido
+ * Crea botones inline para acciones rápidas en un pendiente
  */
 export function createRequestButtons(requestId: string): InlineKeyboardMarkup {
   return {
@@ -190,11 +190,11 @@ export function createMainMenuButtons(): InlineKeyboardMarkup {
   return {
     inline_keyboard: [
       [
-        { text: '➕ Nuevo pedido', callback_data: 'new_request' },
+        { text: '➕ Nuevo pendiente', callback_data: 'new_request' },
         { text: '📋 Ver todos', callback_data: 'view_all' },
       ],
       [
-        { text: '👤 Mis pedidos', callback_data: 'my_requests' },
+        { text: '👤 Mis pendientes', callback_data: 'my_requests' },
         { text: '🔥 Urgentes', callback_data: 'urgent' },
       ],
       [
@@ -206,7 +206,7 @@ export function createMainMenuButtons(): InlineKeyboardMarkup {
 }
 
 /**
- * Crea botones para confirmar completar un pedido
+ * Crea botones para confirmar completar un pendiente
  */
 export function createCompleteConfirmButtons(requestId: string): InlineKeyboardMarkup {
   return {
@@ -220,7 +220,7 @@ export function createCompleteConfirmButtons(requestId: string): InlineKeyboardM
 }
 
 /**
- * Formatea un pedido para mostrar en Telegram
+ * Formatea un pendiente para mostrar en Telegram
  */
 export function formatRequestForTelegram(request: Request, includeDetails: boolean = true): string {
   const priorityEmoji = getPriorityEmoji(request.priority);
@@ -247,9 +247,9 @@ export function formatRequestForTelegram(request: Request, includeDetails: boole
 }
 
 /**
- * Formatea una lista de pedidos para Telegram
+ * Formatea una lista de pendientes para Telegram
  */
-export function formatRequestsList(requests: Request[], title: string = 'Pedidos'): string {
+export function formatRequestsList(requests: Request[], title: string = 'Pendientes'): string {
   if (requests.length === 0) {
     return `📭 No hay ${title.toLowerCase()} en este momento.`;
   }
@@ -267,21 +267,21 @@ export function formatRequestsList(requests: Request[], title: string = 'Pedidos
  * Mensaje de ayuda con todos los comandos
  */
 export function getHelpMessage(): string {
-  return `🤖 *Bot de Pedidos*
+  return `🤖 *Bot de Pendientes*
 
 📝 *Comandos principales:*
 
-/nuevopedido - Crear un nuevo pedido
-/completar - Marcar pedido como completado
-/ver - Ver todos los pedidos activos
-/mios - Ver mis pedidos asignados
+/nuevopendiente - Crear un nuevo pendiente
+/completar - Marcar pendiente como completado
+/ver - Ver todos los pendientes activos
+/mios - Ver mis pendientes asignados
 /menu - Abrir menú con botones
 
 📅 *Filtros por fecha:*
 
-/hoy - Pedidos que vencen hoy
-/semana - Pedidos de esta semana
-/urgente - Pedidos urgentes (< 2 días)
+/hoy - Pendientes que vencen hoy
+/semana - Pendientes de esta semana
+/urgente - Pendientes urgentes (< 2 días)
 
 🔧 *Utilidades:*
 
@@ -298,11 +298,11 @@ export function getHelpMessage(): string {
  * Mensaje de bienvenida
  */
 export function getWelcomeMessage(): string {
-  return `👋 ¡Hola! Soy el bot de gestión de pedidos del equipo.
+  return `👋 ¡Hola! Soy el bot de gestión de pendientes del equipo.
 
 Usa /ayuda para ver todos los comandos disponibles.
 
-¿Necesitas agregar un pedido? Usa /nuevopedido y te guiaré paso a paso.`;
+¿Necesitas agregar un pendiente? Usa /nuevopendiente y te guiaré paso a paso.`;
 }
 
 /**
