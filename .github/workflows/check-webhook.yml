@@ -24,22 +24,15 @@ jobs:
           echo "Expected webhook URL: $EXPECTED_URL"
 
       - name: Reconfigure webhook if needed
-        if: steps.check.outputs.current_url != steps.check.outputs.expected_url
+        if: steps.check.outputs.current_url != steps.check.outputs.expected_url || github.event_name == 'workflow_dispatch'
         run: |
-          echo "Webhook is not configured correctly. Fixing..."
+          echo "Configuring webhook..."
 
-          # Build JSON payload with optional secret token
-          if [ -n "${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" ]; then
-            curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook" \
-              -H "Content-Type: application/json" \
-              -d "{\"url\": \"${{ secrets.SITE_URL }}/.netlify/functions/telegram-webhook\", \"secret_token\": \"${{ secrets.TELEGRAM_WEBHOOK_SECRET }}\"}"
-          else
-            curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook" \
-              -H "Content-Type: application/json" \
-              -d "{\"url\": \"${{ secrets.SITE_URL }}/.netlify/functions/telegram-webhook\"}"
-          fi
+          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook" \
+            -H "Content-Type: application/json" \
+            -d "{\"url\": \"${{ secrets.SITE_URL }}/.netlify/functions/telegram-webhook\", \"secret_token\": \"${{ secrets.TELEGRAM_WEBHOOK_SECRET }}\"}"
 
-          echo "Webhook reconfigured!"
+          echo "Webhook configured!"
 
       - name: Verify webhook
         run: |
