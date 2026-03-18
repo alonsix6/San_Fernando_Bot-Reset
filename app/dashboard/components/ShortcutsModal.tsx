@@ -50,7 +50,7 @@ export default function ShortcutsModal({ isOpen, onClose }: ShortcutsModalProps)
               }}
             >
               <div className="flex items-center gap-3">
-                <Keyboard size={16} className="text-[#FF4500]" />
+                <Keyboard size={16} className="text-[#024b98]" />
                 <span className="text-sm font-bold uppercase tracking-wide text-[#1A1A1A]">
                   ATAJOS DE TECLADO
                 </span>

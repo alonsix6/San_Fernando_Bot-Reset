@@ -135,7 +135,7 @@ export default function SearchFilter({
               aria-live="polite"
             >
               <span>Buscando:</span>
-              <span className="px-2 py-0.5 rounded bg-[#FF4500]/20 text-[#FF4500]">
+              <span className="px-2 py-0.5 rounded bg-[#024b98]/20 text-[#024b98]">
                 &quot;{searchQuery}&quot;
               </span>
             </motion.div>

@@ -3,13 +3,13 @@ import "./globals.css";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
-  title: "Reset R&A - Pendientes",
-  description: "Sistema de gestión de pendientes para el equipo de Research & Analytics de Reset",
+  title: "San Fernando - Pendientes",
+  description: "Sistema de gestión de pendientes - San Fernando",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Reset Pendientes",
+    title: "San Fernando",
   },
   formatDetection: {
     telephone: false,
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FF4500",
+  themeColor: "#024b98",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,

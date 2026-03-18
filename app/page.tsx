@@ -67,10 +67,10 @@ export default function Home() {
               <div
                 className="w-20 h-20 mx-auto mb-6 rounded-xl flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(145deg, #FF5722 0%, #FF4500 50%, #E64A19 100%)',
+                  background: 'linear-gradient(145deg, #0960b8 0%, #024b98 50%, #01396e 100%)',
                   boxShadow: `
-                    0 8px 24px rgba(255,69,0,0.4),
-                    0 4px 12px rgba(255,69,0,0.3),
+                    0 8px 24px rgba(2,75,152,0.4),
+                    0 4px 12px rgba(2,75,152,0.3),
                     inset 0 2px 0 rgba(255,255,255,0.3),
                     inset 0 -2px 0 rgba(0,0,0,0.2)
                   `,
@@ -83,7 +83,7 @@ export default function Home() {
                 className="text-3xl font-black tracking-tight mb-2"
                 style={{ color: '#1A1A1A' }}
               >
-                RESET R&A
+                SAN FERNANDO
               </h1>
               <p
                 className="text-sm uppercase tracking-[0.2em] font-medium"
@@ -109,7 +109,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <Zap size={20} className="mx-auto mb-2 text-[#FF4500]" />
+                <Zap size={20} className="mx-auto mb-2 text-[#024b98]" />
                 <p className="text-[9px] uppercase tracking-wider text-gray-500">Tiempo Real</p>
               </motion.div>
               <motion.div
@@ -139,18 +139,18 @@ export default function Home() {
               <motion.button
                 className="w-full py-4 px-6 rounded-lg flex items-center justify-center gap-3 text-white font-bold uppercase tracking-wider text-sm"
                 style={{
-                  background: 'linear-gradient(180deg, #FF5722 0%, #FF4500 50%, #E64A19 100%)',
+                  background: 'linear-gradient(180deg, #0960b8 0%, #024b98 50%, #01396e 100%)',
                   boxShadow: `
-                    0 6px 0 #BF360C,
-                    0 8px 20px rgba(255,69,0,0.4),
+                    0 6px 0 #012a52,
+                    0 8px 20px rgba(2,75,152,0.4),
                     inset 0 2px 0 rgba(255,255,255,0.2)
                   `,
                 }}
                 whileHover={{
                   scale: 1.02,
                   boxShadow: `
-                    0 6px 0 #BF360C,
-                    0 12px 30px rgba(255,69,0,0.5),
+                    0 6px 0 #012a52,
+                    0 12px 30px rgba(2,75,152,0.5),
                     inset 0 2px 0 rgba(255,255,255,0.2)
                   `,
                 }}
@@ -158,8 +158,8 @@ export default function Home() {
                   scale: 0.98,
                   y: 4,
                   boxShadow: `
-                    0 2px 0 #BF360C,
-                    0 4px 10px rgba(255,69,0,0.3),
+                    0 2px 0 #012a52,
+                    0 4px 10px rgba(2,75,152,0.3),
                     inset 0 2px 0 rgba(255,255,255,0.2)
                   `,
                 }}
@@ -220,7 +220,7 @@ export default function Home() {
             }}
           >
             <p className="text-[9px] uppercase tracking-[0.15em] text-gray-600">
-              Research & Analytics Team
+              San Fernando
             </p>
           </div>
         </div>

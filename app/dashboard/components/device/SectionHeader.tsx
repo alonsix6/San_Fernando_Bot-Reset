@@ -12,7 +12,7 @@ interface SectionHeaderProps {
 export default function SectionHeader({ title, count, color = 'cyan', icon }: SectionHeaderProps) {
   const colors = {
     red: { led: '#CE2021', text: '#CE2021' },
-    orange: { led: '#FF4500', text: '#FF4500' },
+    orange: { led: '#024b98', text: '#024b98' },
     green: { led: '#1AA167', text: '#1AA167' },
     cyan: { led: '#00D4FF', text: '#00D4FF' },
   };

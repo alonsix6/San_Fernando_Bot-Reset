@@ -32,7 +32,7 @@ interface IconProps {
 
 // Iconos de prioridad
 export function PriorityUrgent({ className, size = 16 }: IconProps) {
-  return <CircleDot className={className} size={size} style={{ color: '#FF4500' }} />;
+  return <CircleDot className={className} size={size} style={{ color: '#024b98' }} />;
 }
 
 export function PriorityHigh({ className, size = 16 }: IconProps) {
@@ -76,7 +76,7 @@ export function StatusCompleted({ className, size = 16 }: IconProps) {
 }
 
 export function StatusCancelled({ className, size = 16 }: IconProps) {
-  return <XCircle className={className} size={size} style={{ color: '#FF4500' }} />;
+  return <XCircle className={className} size={size} style={{ color: '#024b98' }} />;
 }
 
 export function getStatusIcon(status: string, size = 16) {
@@ -96,7 +96,7 @@ export function getStatusIcon(status: string, size = 16) {
 
 // Iconos de secciones
 export function SectionUrgent({ className, size = 16 }: IconProps) {
-  return <AlertCircle className={className} size={size} style={{ color: '#FF4500' }} />;
+  return <AlertCircle className={className} size={size} style={{ color: '#024b98' }} />;
 }
 
 export function SectionThisWeek({ className, size = 16 }: IconProps) {

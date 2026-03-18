@@ -16,7 +16,7 @@ import {
   createCompleteConfirmButtons,
   InlineKeyboardMarkup,
 } from '../../lib/telegram';
-import { Request, ConversationStep, NewRequestData, CompleteRequestData, User } from '../../lib/types';
+import { Request, ConversationStep, NewRequestData, CompleteRequestData, User, AREAS } from '../../lib/types';
 import { differenceInDays, parseISO, differenceInMinutes } from 'date-fns';
 import { parseNaturalDate, calculatePriority, getPriorityEmoji, formatLimaDate } from '../../lib/utils';
 
@@ -194,37 +194,6 @@ async function checkRateLimit(userId: string, supabase: SupabaseClient): Promise
   };
 }
 
-/**
- * Obtiene los miembros del equipo en una sola query (dinámico por team_id)
- */
-async function getTeamMembers(supabase: SupabaseClient): Promise<{ id: string; name: string }[]> {
-  let query = supabase
-    .from('users')
-    .select('id, name')
-    .order('name', { ascending: true });
-
-  if (TEAM_ID) {
-    query = query.eq('team_id', TEAM_ID);
-  }
-
-  const { data: users } = await query;
-  return users || [];
-}
-
-/**
- * Obtiene mapa nombre->id de los miembros del equipo
- */
-async function getTeamMemberIds(supabase: SupabaseClient): Promise<Record<string, string | null>> {
-  const members = await getTeamMembers(supabase);
-  const memberIds: Record<string, string | null> = {};
-
-  members.forEach((user) => {
-    memberIds[user.name] = user.id;
-  });
-
-  return memberIds;
-}
-
 const conversationMessages = {
   start: '📝 *Nuevo pendiente para el equipo*\n\n¿Para qué *cliente/cuenta*?',
 
@@ -237,17 +206,13 @@ const conversationMessages = {
   requester: (requester: string) =>
     `✅ Solicitante: ${requester}\n\n¿Fecha de entrega?\nPuedes usar:\n• Fecha: "25/12" o "25/12/2024"\n• Relativo: "hoy", "mañana", "en 3 días"`,
 
-  deadline: (deadline: string, formatted: string, memberNames?: string[]) => {
+  deadline: (deadline: string, formatted: string) => {
+    const emojis = ['1️⃣', '2️⃣', '3️⃣'];
     let assignOptions = '';
-    if (memberNames && memberNames.length > 0) {
-      const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
-      memberNames.forEach((name, i) => {
-        assignOptions += `${emojis[i] || `${i + 1}.`} ${name}\n`;
-      });
-      assignOptions += `${emojis[memberNames.length] || `${memberNames.length + 1}.`} Sin asignar`;
-    } else {
-      assignOptions = '1️⃣ Sin asignar';
-    }
+    AREAS.forEach((area, i) => {
+      assignOptions += `${emojis[i]} ${area}\n`;
+    });
+    assignOptions += `${AREAS.length + 1}️⃣ Sin asignar`;
     return `✅ Deadline: ${formatted}\n\n¿Quién se encarga?\n${assignOptions}\n\nResponde con el número.`;
   },
 
@@ -480,8 +445,9 @@ export const handler: Handler = async (event) => {
           await handleVerCommand(chatId);
           break;
 
+        case '/area':
         case '/mios':
-          await handleMiosCommand(chatId, user.id);
+          await handleAreaCommand(chatId);
           break;
 
         case '/hoy':
@@ -617,10 +583,6 @@ async function handleConversationFlow(
       requestData.deadline = parsedDate.toISOString();
       const formatted = formatLimaDate(parsedDate);
 
-      // Cargar miembros del equipo para mostrar opciones de asignación
-      const membersForDeadline = await getTeamMembers(getSupabase());
-      const memberNames = membersForDeadline.map(m => m.name);
-
       await saveConversationState(
         {
           chatId: chatId.toString(),
@@ -630,26 +592,23 @@ async function handleConversationFlow(
         },
         getSupabase()
       );
-      await sendMessage(chatId, conversationMessages.deadline(text, formatted, memberNames));
+      await sendMessage(chatId, conversationMessages.deadline(text, formatted));
       break;
 
     case 'awaiting_assigned':
-      // Obtener miembros del equipo dinámicamente
-      const teamMembers = await getTeamMembers(getSupabase());
       const selNum = parseInt(text, 10);
 
       let assignedTo: string | null = null;
       let assignedName = 'Sin asignar';
 
-      if (isNaN(selNum) || selNum < 1 || selNum > teamMembers.length + 1) {
-        await sendMessage(chatId, conversationMessages.invalidAssignment(teamMembers.length + 1));
+      if (isNaN(selNum) || selNum < 1 || selNum > AREAS.length + 1) {
+        await sendMessage(chatId, conversationMessages.invalidAssignment(AREAS.length + 1));
         return;
       }
 
-      if (selNum <= teamMembers.length) {
-        const selectedMember = teamMembers[selNum - 1];
-        assignedName = selectedMember.name;
-        assignedTo = selectedMember.id;
+      if (selNum <= AREAS.length) {
+        assignedTo = AREAS[selNum - 1];
+        assignedName = AREAS[selNum - 1];
       }
       // else: último número = "Sin asignar" (assignedTo queda null)
 
@@ -813,27 +772,54 @@ async function handleVerCommand(chatId: number) {
 }
 
 /**
- * Comando /mios - Muestra pendientes asignados al usuario
+ * Comando /area - Muestra resumen de pendientes por área
  */
-async function handleMiosCommand(chatId: number, userId: string) {
-  const { data: requests, error } = await getSupabase()
+async function handleAreaCommand(chatId: number) {
+  let areaQuery = getSupabase()
     .from('requests')
-    .select('*')
-    .eq('assigned_to', userId)
-    .in('status', ['pending', 'in_progress'])
-    .order('deadline', { ascending: true });
+    .select('assigned_to')
+    .in('status', ['pending', 'in_progress']);
+
+  if (TEAM_ID) {
+    areaQuery = areaQuery.eq('team_id', TEAM_ID);
+  }
+
+  const { data: requests, error } = await areaQuery;
 
   if (error) {
-    await sendMessage(chatId, '❌ Error al obtener tus pendientes. Intenta de nuevo.');
+    await sendMessage(chatId, '❌ Error al obtener los pendientes. Intenta de nuevo.');
     return;
   }
 
-  if (!requests || requests.length === 0) {
-    await sendMessage(chatId, '📭 No tienes pendientes asignados en este momento.');
-    return;
-  }
+  const allRequests = requests || [];
 
-  const message = formatRequestsList(requests as Request[], 'Mis Pendientes');
+  // Count per area
+  const counts: Record<string, number> = {};
+  AREAS.forEach(area => { counts[area] = 0; });
+  let sinAsignar = 0;
+
+  allRequests.forEach((r: { assigned_to: string | null }) => {
+    if (!r.assigned_to) {
+      sinAsignar++;
+    } else if (counts[r.assigned_to] !== undefined) {
+      counts[r.assigned_to]++;
+    } else {
+      // Legacy assignments that don't match an area
+      sinAsignar++;
+    }
+  });
+
+  const total = allRequests.length;
+
+  let message = '📊 *Pendientes por área*\n\n';
+  AREAS.forEach(area => {
+    const c = counts[area];
+    message += `🏢 *${area}:* ${c} pendiente${c !== 1 ? 's' : ''}\n`;
+  });
+  message += `📭 *Sin asignar:* ${sinAsignar} pendiente${sinAsignar !== 1 ? 's' : ''}\n`;
+  message += `\nTotal: ${total} pendiente${total !== 1 ? 's' : ''} activo${total !== 1 ? 's' : ''}`;
+  message += '\nUsa /ver para ver el detalle completo.';
+
   await sendMessage(chatId, message);
 }
 
@@ -992,9 +978,9 @@ async function handleCallbackQuery(callbackQuery: TelegramCallbackQuery) {
       await answerCallbackQuery(callbackQuery.id);
       await handleVerCommand(chatId);
     }
-    else if (data === 'my_requests') {
+    else if (data === 'by_area') {
       await answerCallbackQuery(callbackQuery.id);
-      await handleMiosCommand(chatId, user.id);
+      await handleAreaCommand(chatId);
     }
     else if (data === 'urgent') {
       await answerCallbackQuery(callbackQuery.id);

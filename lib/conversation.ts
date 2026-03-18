@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { ConversationStep, NewRequestData, CompleteRequestData } from './types';
+import { ConversationStep, NewRequestData, CompleteRequestData, AREAS } from './types';
 
 const TEAM_ID = process.env.TEAM_ID;
 
@@ -104,8 +104,15 @@ export const conversationMessages = {
   requester: (requester: string) =>
     `✅ Solicitante: ${requester}\n\n¿Fecha de entrega?\nPuedes usar:\n• Fecha: "25/12" o "25/12/2024"\n• Relativo: "hoy", "mañana", "en 3 días"`,
 
-  deadline: (deadline: string, formatted: string) =>
-    `✅ Deadline: ${formatted}\n\n¿Quién se encarga?\n1️⃣ Sol\n2️⃣ Estef\n3️⃣ Alonso\n4️⃣ Mellanie\n5️⃣ Sin asignar\n\nResponde con el número.`,
+  deadline: (deadline: string, formatted: string) => {
+    const emojis = ['1️⃣', '2️⃣', '3️⃣'];
+    let assignOptions = '';
+    AREAS.forEach((area, i) => {
+      assignOptions += `${emojis[i]} ${area}\n`;
+    });
+    assignOptions += `${AREAS.length + 1}️⃣ Sin asignar`;
+    return `✅ Deadline: ${formatted}\n\n¿Quién se encarga?\n${assignOptions}\n\nResponde con el número.`;
+  },
 
   summary: (data: NewRequestData, assigned: string, priority: string, emoji: string) => {
     const parts = data.requester_name?.split(',') || ['', ''];
@@ -121,5 +128,5 @@ export const conversationMessages = {
 
   invalidDate: '⚠️ No pude entender esa fecha. Usa formatos como:\n• "25/12" o "25/12/2024"\n• "hoy", "mañana"\n• "en 3 días"',
 
-  invalidAssignment: '⚠️ Por favor responde con 1, 2, 3, 4 o 5.',
+  invalidAssignment: `⚠️ Por favor responde con un número del 1 al ${AREAS.length + 1}.`,
 };

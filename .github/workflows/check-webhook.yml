@@ -43,7 +43,7 @@ jobs:
               "commands": [
                 {"command": "nuevopendiente", "description": "Crear un nuevo pendiente"},
                 {"command": "ver", "description": "Ver todos los pendientes activos"},
-                {"command": "mios", "description": "Ver mis pendientes asignados"},
+                {"command": "area", "description": "Ver pendientes por área"},
                 {"command": "completar", "description": "Marcar como completado"},
                 {"command": "hoy", "description": "Pendientes que vencen hoy"},
                 {"command": "semana", "description": "Pendientes de esta semana"},

@@ -194,7 +194,7 @@ export function createMainMenuButtons(): InlineKeyboardMarkup {
         { text: '📋 Ver todos', callback_data: 'view_all' },
       ],
       [
-        { text: '👤 Mis pendientes', callback_data: 'my_requests' },
+        { text: '🏢 Por área', callback_data: 'by_area' },
         { text: '🔥 Urgentes', callback_data: 'urgent' },
       ],
       [
@@ -236,7 +236,7 @@ export function formatRequestForTelegram(request: Request, includeDetails: boole
     message += `• Deadline: ${formatLimaDate(request.deadline)} (${daysLeft})\n`;
     message += `• Estado: ${statusEmoji} ${request.status}\n`;
     if (request.assigned_to) {
-      message += `• Asignado: @${request.assigned_to}\n`;
+      message += `• Asignado: ${request.assigned_to}\n`;
     }
   } else {
     message += `Solicitante: ${request.requester_name}\n`;
@@ -274,7 +274,7 @@ export function getHelpMessage(): string {
 /nuevopendiente - Crear un nuevo pendiente
 /completar - Marcar pendiente como completado
 /ver - Ver todos los pendientes activos
-/mios - Ver mis pendientes asignados
+/area - Ver pendientes por área
 /menu - Abrir menú con botones
 
 📅 *Filtros por fecha:*

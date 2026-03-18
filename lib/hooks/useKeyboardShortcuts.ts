@@ -93,7 +93,7 @@ export function createDashboardShortcuts({
     {
       key: 'Escape',
       action: onCloseModal,
-      description: 'Cerrar modal/dialogo',
+      description: 'Cerrar modal/diálogo',
     },
     {
       key: 'k',

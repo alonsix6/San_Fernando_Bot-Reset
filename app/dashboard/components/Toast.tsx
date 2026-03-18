@@ -91,8 +91,8 @@ function ToastItem({
     },
     notification: {
       bg: 'linear-gradient(180deg, #3D2A1A 0%, #2A1A0A 100%)',
-      border: '#FF4500',
-      icon: '#FF6B3D',
+      border: '#024b98',
+      icon: '#0960b8',
     },
   };
 

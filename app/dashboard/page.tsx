@@ -38,7 +38,7 @@ import { useSettings } from '@/lib/hooks/useSettings';
 import { useAppSound } from '@/lib/hooks/useAppSound';
 import { useKeyboardShortcuts, createDashboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts';
 import { useRealtimeRequests } from '@/lib/hooks/useRealtimeRequests';
-import { useTeamMembers } from '@/lib/hooks/useTeamMembers';
+import { AREAS } from '@/lib/types';
 import { useTheme } from '@/lib/hooks/useTheme';
 import { useToast } from './components/Toast';
 import { useTeamInfo } from '@/lib/hooks/useTeamInfo';
@@ -75,9 +75,8 @@ export default function DashboardPage() {
   // Team info
   const { team } = useTeamInfo();
 
-  // Team members
-  const { members: teamMembers } = useTeamMembers();
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
+  // Area filter
+  const [selectedArea, setSelectedArea] = useState<string | null>(null);
 
   // UI State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -234,8 +233,8 @@ export default function DashboardPage() {
     [requests]
   );
 
-  // Calculate requests by member
-  const requestsByMember = useMemo(() => {
+  // Calculate requests by area
+  const requestsByArea = useMemo(() => {
     const counts: Record<string, number> = {};
     activeRequests.forEach((r) => {
       if (r.assigned_to) {
@@ -247,7 +246,7 @@ export default function DashboardPage() {
 
   // Filtered stats for LCD display
   const filteredStats = useMemo(() => {
-    if (selectedMember === null) {
+    if (selectedArea === null) {
       return {
         total: requests.length,
         active: activeRequests.length,
@@ -256,26 +255,26 @@ export default function DashboardPage() {
       };
     }
 
-    const memberRequests = requests.filter(r => r.assigned_to === selectedMember);
-    const memberActive = memberRequests.filter(r => r.status === 'pending' || r.status === 'in_progress');
-    const memberCompleted = memberRequests.filter(r => r.status === 'completed');
-    const memberUrgent = memberActive.filter(r => r.priority === 'urgent' || r.priority === 'high');
+    const areaRequests = requests.filter(r => r.assigned_to === selectedArea);
+    const areaActive = areaRequests.filter(r => r.status === 'pending' || r.status === 'in_progress');
+    const areaCompleted = areaRequests.filter(r => r.status === 'completed');
+    const areaUrgent = areaActive.filter(r => r.priority === 'urgent' || r.priority === 'high');
 
     return {
-      total: memberRequests.length,
-      active: memberActive.length,
-      completed: memberCompleted.length,
-      urgent: memberUrgent.length,
+      total: areaRequests.length,
+      active: areaActive.length,
+      completed: areaCompleted.length,
+      urgent: areaUrgent.length,
     };
-  }, [requests, activeRequests, completedRequests, selectedMember]);
+  }, [requests, activeRequests, completedRequests, selectedArea]);
 
   // Filter & Sort
   const filteredRequests = useMemo(() => {
     let result = [...activeRequests];
 
-    // Filter by selected team member
-    if (selectedMember !== null) {
-      result = result.filter((r) => r.assigned_to === selectedMember);
+    // Filter by selected area
+    if (selectedArea !== null) {
+      result = result.filter((r) => r.assigned_to === selectedArea);
     }
 
     if (searchQuery.trim()) {
@@ -309,7 +308,7 @@ export default function DashboardPage() {
     });
 
     return result;
-  }, [activeRequests, selectedMember, searchQuery, settings.sortBy, settings.sortOrder]);
+  }, [activeRequests, selectedArea, searchQuery, settings.sortBy, settings.sortOrder]);
 
   const { urgent, thisWeek, later } = useMemo(() =>
     classifyByUrgency(filteredRequests),
@@ -331,7 +330,7 @@ export default function DashboardPage() {
       <header className="flex items-start justify-between p-4 pb-2">
         <div>
           <h1 className="text-lg font-bold tracking-wide" style={{ color: 'var(--header-text)' }}>
-            {team?.name?.toUpperCase() || 'PEDIDOS'}
+            {team?.name?.toUpperCase() || 'SAN FERNANDO'}
           </h1>
           <p className="text-[10px] uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--footer-text)' }}>
             Sistema de Pendientes v2.0
@@ -378,13 +377,13 @@ export default function DashboardPage() {
             active={filteredStats.active}
             completed={filteredStats.completed}
             urgent={filteredStats.urgent}
-            teamMembers={teamMembers}
-            selectedMember={selectedMember}
-            onMemberSelect={(memberId) => {
+            areas={AREAS}
+            selectedArea={selectedArea}
+            onAreaSelect={(area) => {
               playClick();
-              setSelectedMember(memberId);
+              setSelectedArea(area);
             }}
-            requestsByMember={requestsByMember}
+            requestsByArea={requestsByArea}
           />
         )}
       </div>
@@ -547,7 +546,7 @@ export default function DashboardPage() {
                 )}
               </AnimatePresence>
 
-              {/* Proximos */}
+              {/* Próximos */}
               <AnimatePresence mode="popLayout">
                 {later.length > 0 && (
                   <motion.section
@@ -556,7 +555,7 @@ export default function DashboardPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                   >
-                    <SectionHeader title="PROXIMOS" count={later.length} color="green" />
+                    <SectionHeader title="PRÓXIMOS" count={later.length} color="green" />
                     <SortableContext items={later.map((r) => r.id)} strategy={verticalListSortingStrategy}>
                       <motion.div
                         variants={staggerContainerVariants}
@@ -640,7 +639,7 @@ export default function DashboardPage() {
                 Intenta con otra búsqueda o{' '}
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="text-[#00E5FF] hover:underline focus:outline-none focus:ring-2 focus:ring-[#FF4500] focus:ring-offset-2 focus:ring-offset-[#131313] rounded"
+                  className="text-[#00E5FF] hover:underline focus:outline-none focus:ring-2 focus:ring-[#024b98] focus:ring-offset-2 focus:ring-offset-[#131313] rounded"
                   aria-label="Limpiar filtro de búsqueda"
                 >
                   limpia el filtro
@@ -669,7 +668,7 @@ export default function DashboardPage() {
           href="https://t.me/Research_Pedidos_bot"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[10px] hover:text-[#FF4500] transition-colors"
+          className="flex items-center gap-1 text-[10px] hover:text-[#024b98] transition-colors"
           style={{ color: '#595959' }}
           aria-label="Abrir bot de Telegram @Research_Pedidos_bot en nueva ventana"
         >
