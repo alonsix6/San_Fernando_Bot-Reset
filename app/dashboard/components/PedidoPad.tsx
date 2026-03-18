@@ -115,7 +115,7 @@ export default function PedidoPad({
 
       {/* Contenido */}
       <div className={`${isDraggable && !isCompleted ? 'pl-6' : ''} pr-4`}>
-        {/* Cliente */}
+        {/* Proyecto */}
         <h3
           className={`font-bold uppercase tracking-wide mb-1 ${compact ? 'text-[10px]' : 'text-xs'}`}
           style={{ color: '#E5E5E5' }}

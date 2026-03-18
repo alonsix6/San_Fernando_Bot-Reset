@@ -232,11 +232,11 @@ export function formatRequestForTelegram(request: Request, includeDetails: boole
 
   if (includeDetails) {
     message += `\n📋 Detalles:\n`;
-    message += `• Solicitante: ${request.requester_name} (${request.requester_role})\n`;
-    message += `• Deadline: ${formatLimaDate(request.deadline)} (${daysLeft})\n`;
+    message += `• Solicitante: ${request.requester_name}\n`;
+    message += `• Fecha: ${formatLimaDate(request.deadline)} (${daysLeft})\n`;
     message += `• Estado: ${statusEmoji} ${request.status}\n`;
     if (request.assigned_to) {
-      message += `• Asignado: ${request.assigned_to}\n`;
+      message += `• Área: ${request.assigned_to}\n`;
     }
   } else {
     message += `Solicitante: ${request.requester_name}\n`;
@@ -267,12 +267,12 @@ export function formatRequestsList(requests: Request[], title: string = 'Pendien
  * Mensaje de ayuda con todos los comandos
  */
 export function getHelpMessage(): string {
-  return `🤖 *Bot de Pendientes*
+  return `🤖 *Bot de Pendientes — San Fernando*
 
 📝 *Comandos principales:*
 
 /nuevopendiente - Crear un nuevo pendiente
-/completar - Marcar pendiente como completado
+/completar - Marcar como completado
 /ver - Ver todos los pendientes activos
 /area - Ver pendientes por área
 /menu - Abrir menú con botones
@@ -286,23 +286,25 @@ export function getHelpMessage(): string {
 🔧 *Utilidades:*
 
 /cancelar - Cancelar operación actual
-/ayuda - Ver este mensaje de ayuda
+/ayuda - Ver este mensaje
 
 ---
-💡 *Tip:* Usa los botones de abajo para acceder rápidamente a las opciones.
+💡 Usa los botones de abajo para acceder rápido a las opciones.
 
-⏰ *Resumen diario:* Recibirás un resumen automático a las 9am de Lunes a Viernes.`;
+⏰ *Recordatorios:* Todos los días a las 8am y resumen semanal los viernes a las 6pm.`;
 }
 
 /**
  * Mensaje de bienvenida
  */
 export function getWelcomeMessage(): string {
-  return `👋 ¡Hola! Soy el bot de gestión de pendientes del equipo.
+  return `👋 *¡Hola!* Soy el bot del equipo San Fernando.
 
-Usa /ayuda para ver todos los comandos disponibles.
+Te ayudo a gestionar los pendientes del día a día entre el equipo y las agencias.
 
-¿Necesitas agregar un pendiente? Usa /nuevopendiente y te guiaré paso a paso.`;
+📝 /nuevopendiente — Crear un pendiente
+📋 /ver — Ver pendientes activos
+❓ /ayuda — Ver todos los comandos`;
 }
 
 /**

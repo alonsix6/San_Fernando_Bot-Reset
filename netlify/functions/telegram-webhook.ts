@@ -195,16 +195,16 @@ async function checkRateLimit(userId: string, supabase: SupabaseClient): Promise
 }
 
 const conversationMessages = {
-  start: '📝 *Nuevo pendiente para el equipo*\n\n¿Para qué *cliente/cuenta*?',
+  start: '📝 *¡Vamos a crear un pendiente!*\n\n¿Para qué *proyecto o campaña* es?',
 
   client: (client: string) =>
-    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pendiente)`,
+    `✅ Proyecto: *${client}*\n\n¿Qué se necesita? Cuéntame los detalles`,
 
   description: (desc: string) =>
-    `✅ Pendiente: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
+    `✅ Pendiente: ${desc}\n\n¿Quién lo solicita?`,
 
   requester: (requester: string) =>
-    `✅ Solicitante: ${requester}\n\n¿Fecha de entrega?\nPuedes usar:\n• Fecha: "25/12" o "25/12/2024"\n• Relativo: "hoy", "mañana", "en 3 días"`,
+    `✅ Solicitante: ${requester}\n\n¿Para cuándo lo necesitan?\n• Fecha: "25/03" o "25/03/2026"\n• Relativo: "hoy", "mañana", "en 3 días"`,
 
   deadline: (deadline: string, formatted: string) => {
     const emojis = ['1️⃣', '2️⃣', '3️⃣'];
@@ -213,30 +213,26 @@ const conversationMessages = {
       assignOptions += `${emojis[i]} ${area}\n`;
     });
     assignOptions += `${AREAS.length + 1}️⃣ Sin asignar`;
-    return `✅ Deadline: ${formatted}\n\n¿Quién se encarga?\n${assignOptions}\n\nResponde con el número.`;
+    return `✅ Fecha: ${formatted}\n\n¿A qué área le toca?\n${assignOptions}\n\nResponde con el número`;
   },
 
   summary: (data: NewRequestData, assigned: string, priority: string, emoji: string) => {
-    const parts = data.requester_name?.split(',') || ['', ''];
-    const name = parts[0]?.trim() || data.requester_name;
-    const role = parts[1]?.trim() || '';
-
-    return `✅ *Pendiente creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPendiente: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pendiente ha sido guardado y todos pueden verlo con /ver`;
+    return `✅ *¡Pendiente creado!*\n\n📋 *Resumen:*\n🎯 Proyecto: ${data.client}\n📝 Pendiente: ${data.description}\n👤 Solicitante: ${data.requester_name}\n📅 Fecha: ${data.deadline}\n🏢 Área: ${assigned}\n${emoji} Prioridad: ${priority}\n\n✨ Listo, todos pueden verlo con /ver`;
   },
 
-  cancel: '❌ Pendiente cancelado. Usa /nuevopendiente cuando quieras crear uno nuevo.',
+  cancel: '❌ Cancelado. Usa /nuevopendiente cuando quieras crear uno nuevo.',
 
-  error: '⚠️ No entendí esa respuesta. Por favor intenta de nuevo.',
+  error: '⚠️ No entendí esa respuesta, intenta de nuevo.',
 
-  invalidDate: '⚠️ No pude entender esa fecha. Usa formatos como:\n• "25/12" o "25/12/2024"\n• "hoy", "mañana"\n• "en 3 días"',
+  invalidDate: '⚠️ No pude entender esa fecha. Prueba con:\n• "25/03" o "25/03/2026"\n• "hoy", "mañana"\n• "en 3 días"',
 
   invalidAssignment: (max: number) =>
-    `⚠️ Por favor responde con un número del 1 al ${max}.`,
+    `⚠️ Responde con un número del 1 al ${max}.`,
 
-  conversationExpired: '⏰ Tu sesión ha expirado por inactividad. Usa /nuevopendiente para comenzar de nuevo.',
+  conversationExpired: '⏰ Se venció el tiempo. Usa /nuevopendiente para empezar de nuevo.',
 
   rateLimited: (remaining: number) =>
-    `⚠️ Has alcanzado el límite de ${RATE_LIMIT_MAX_REQUESTS} pendientes en ${RATE_LIMIT_WINDOW_MINUTES} minutos. Espera un momento antes de crear más pendientes.`,
+    `⚠️ Has alcanzado el límite de ${RATE_LIMIT_MAX_REQUESTS} pendientes en ${RATE_LIMIT_WINDOW_MINUTES} minutos. Espera un momento e intenta de nuevo.`,
 };
 
 // ===== Fin funciones de conversación =====
@@ -555,13 +551,7 @@ async function handleConversationFlow(
       break;
 
     case 'awaiting_requester':
-      requestData.requester_name = text;
-      // Separar nombre y rol si viene en formato "Nombre, Rol"
-      const parts = text.split(',');
-      if (parts.length > 1) {
-        requestData.requester_name = parts[0].trim();
-        requestData.requester_role = parts[1].trim();
-      }
+      requestData.requester_name = text.trim();
       await saveConversationState(
         {
           chatId: chatId.toString(),
@@ -731,12 +721,12 @@ async function handleCompletarCommand(chatId: number, userId: string) {
   );
 
   // Mostrar lista de pendientes con números
-  let message = '📝 *Pendientes activos*\n\nResponde con el número del pendiente a completar:\n\n';
+  let message = '📝 *¿Cuál completaste?*\n\nResponde con el número:\n\n';
   requests.forEach((req: Request, index: number) => {
     const emoji = getPriorityEmoji(req.priority);
-    message += `*${index + 1}.* ${emoji} ${req.client} - ${req.description.substring(0, 40)}${req.description.length > 40 ? '...' : ''}\n`;
+    message += `*${index + 1}.* ${emoji} ${req.client} — ${req.description.substring(0, 40)}${req.description.length > 40 ? '...' : ''}\n`;
   });
-  message += '\nO usa /cancelar para cancelar.';
+  message += '\nO /cancelar para cancelar.';
 
   await sendMessage(chatId, message);
 }

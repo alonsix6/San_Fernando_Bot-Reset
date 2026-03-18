@@ -2,9 +2,8 @@ name: Weekly Summary
 
 on:
   schedule:
-    # Viernes a las 3PM Lima (20:00 UTC)
-    # Lima es UTC-5
-    - cron: '0 20 * * 5'
+    # 23:00 UTC Viernes = 06:00 PM Lima (UTC-5)
+    - cron: '0 23 * * 5'
   workflow_dispatch: # Permite ejecución manual
 
 jobs:
@@ -19,10 +18,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install @supabase/supabase-js date-fns
 
       - name: Run weekly summary script
         env:

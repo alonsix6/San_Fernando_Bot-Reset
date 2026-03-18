@@ -1,7 +1,7 @@
 /**
  * Script de recordatorio diario para el bot de Telegram
- * Se ejecuta diariamente a las 9AM Lima (14:00 UTC) via GitHub Actions
- * Envía un resumen de pendientes urgentes al grupo de Telegram
+ * Se ejecuta todos los días a las 8AM Lima (13:00 UTC) via GitHub Actions
+ * Envía un resumen de pendientes al grupo de Telegram
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -136,18 +136,18 @@ async function main() {
     }
 
     // Construir mensaje
-    let message = `🔔 *Buenos días ${teamName}!*\n\n`;
-    message += `📊 *PENDIENTES ACTIVOS (${requests.length})*\n\n`;
+    let message = `☀️ *¡Buenos días, ${teamName}!*\n\n`;
+    message += `📊 Tienen *${requests.length} pendiente${requests.length !== 1 ? 's' : ''}* activo${requests.length !== 1 ? 's' : ''}\n\n`;
 
     // Pendientes urgentes (vencen hoy o atrasados)
     if (urgent.length > 0) {
-      message += `🔴 *URGENTE - Vence HOY o atrasado* (${urgent.length})\n\n`;
+      message += `🔴 *URGENTE — Vence hoy o atrasado* (${urgent.length})\n\n`;
       urgent.forEach((req) => {
         const emoji = getPriorityEmoji(req.priority);
         const daysLeft = formatDaysLeft(req.deadline);
-        message += `${emoji} *${req.client.toUpperCase()}* - ${req.description.substring(0, 60)}${req.description.length > 60 ? '...' : ''}\n`;
-        message += `   Solicitante: ${req.requester_name}\n`;
-        message += `   ${daysLeft}\n\n`;
+        message += `${emoji} *${req.client.toUpperCase()}* — ${req.description.substring(0, 60)}${req.description.length > 60 ? '...' : ''}\n`;
+        message += `   👤 ${req.requester_name}\n`;
+        message += `   ⏰ ${daysLeft}\n\n`;
       });
     }
 
@@ -157,8 +157,8 @@ async function main() {
       soon.forEach((req) => {
         const emoji = getPriorityEmoji(req.priority);
         const daysLeft = formatDaysLeft(req.deadline);
-        message += `${emoji} *${req.client.toUpperCase()}* - ${req.description.substring(0, 60)}${req.description.length > 60 ? '...' : ''}\n`;
-        message += `   ${daysLeft}\n\n`;
+        message += `${emoji} *${req.client.toUpperCase()}* — ${req.description.substring(0, 60)}${req.description.length > 60 ? '...' : ''}\n`;
+        message += `   ⏰ ${daysLeft}\n\n`;
       });
     }
 
@@ -168,7 +168,7 @@ async function main() {
       thisWeek.slice(0, 5).forEach((req) => {
         const emoji = getPriorityEmoji(req.priority);
         const daysLeft = formatDaysLeft(req.deadline);
-        message += `${emoji} ${req.client} - ${daysLeft}\n`;
+        message += `${emoji} ${req.client} — ${daysLeft}\n`;
       });
       if (thisWeek.length > 5) {
         message += `... y ${thisWeek.length - 5} más\n`;
@@ -177,8 +177,8 @@ async function main() {
     }
 
     message += '---\n';
-    message += '💡 Usa /completar para marcar listos\n';
-    message += '📝 /nuevopendiente para agregar más';
+    message += '✅ /completar — Marcar como listo\n';
+    message += '📝 /nuevopendiente — Agregar pendiente';
 
     // Enviar mensaje
     console.log('📤 Enviando recordatorio a Telegram...');

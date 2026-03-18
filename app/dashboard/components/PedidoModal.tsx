@@ -93,7 +93,7 @@ export default function PedidoModal({
     const newErrors: Record<string, string> = {};
 
     if (!formData.client.trim()) {
-      newErrors.client = 'El cliente es requerido';
+      newErrors.client = 'El proyecto es requerido';
     }
     if (!formData.description.trim()) {
       newErrors.description = 'La descripción es requerida';
@@ -244,11 +244,11 @@ export default function PedidoModal({
             <div className="flex-1 overflow-y-auto p-4">
               <div className="lcd-screen p-4">
                 <form id={formId} onSubmit={handleSubmit} className="space-y-4" noValidate>
-                  {/* Cliente */}
+                  {/* Proyecto / Campaña */}
                   <FormField
                     id={`${formId}-client`}
                     icon={<Briefcase size={12} />}
-                    label="Cliente / Cuenta"
+                    label="Proyecto / Campaña"
                     error={errors.client}
                     required
                   >
@@ -258,7 +258,7 @@ export default function PedidoModal({
                       value={formData.client}
                       onChange={(e) => setFormData({ ...formData, client: e.target.value })}
                       className="input-lcd w-full"
-                      placeholder="Ej: Claro, Movistar, BCP..."
+                      placeholder="Ej: Lanzamiento Nuggets, Parrillero 2026..."
                       aria-invalid={!!errors.client}
                       aria-describedby={errors.client ? `${formId}-client-error` : undefined}
                       required
@@ -287,40 +287,25 @@ export default function PedidoModal({
                   </FormField>
 
                   {/* Solicitante */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <FormField
+                  <FormField
+                    id={`${formId}-requester`}
+                    icon={<User size={12} />}
+                    label="Solicitante"
+                    error={errors.requester_name}
+                    required
+                  >
+                    <input
                       id={`${formId}-requester`}
-                      icon={<User size={12} />}
-                      label="Solicitante"
-                      error={errors.requester_name}
+                      type="text"
+                      value={formData.requester_name}
+                      onChange={(e) => setFormData({ ...formData, requester_name: e.target.value })}
+                      className="input-lcd w-full"
+                      placeholder="¿Quién lo solicita?"
+                      aria-invalid={!!errors.requester_name}
+                      aria-describedby={errors.requester_name ? `${formId}-requester-error` : undefined}
                       required
-                    >
-                      <input
-                        id={`${formId}-requester`}
-                        type="text"
-                        value={formData.requester_name}
-                        onChange={(e) => setFormData({ ...formData, requester_name: e.target.value })}
-                        className="input-lcd w-full"
-                        placeholder="Nombre"
-                        aria-invalid={!!errors.requester_name}
-                        aria-describedby={errors.requester_name ? `${formId}-requester-error` : undefined}
-                        required
-                      />
-                    </FormField>
-                    <FormField
-                      id={`${formId}-role`}
-                      label="Cargo"
-                    >
-                      <input
-                        id={`${formId}-role`}
-                        type="text"
-                        value={formData.requester_role}
-                        onChange={(e) => setFormData({ ...formData, requester_role: e.target.value })}
-                        className="input-lcd w-full"
-                        placeholder="Ej: Ejecutiva"
-                      />
-                    </FormField>
-                  </div>
+                    />
+                  </FormField>
 
                   {/* Deadline */}
                   <FormField

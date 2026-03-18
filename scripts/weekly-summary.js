@@ -1,6 +1,6 @@
 /**
  * Script de resumen semanal para el bot de Telegram
- * Se ejecuta los viernes a las 3PM Lima (20:00 UTC) via GitHub Actions
+ * Se ejecuta los viernes a las 6PM Lima (23:00 UTC) via GitHub Actions
  * Envía un resumen de la semana: completados y pendientes
  */
 
@@ -159,16 +159,16 @@ async function main() {
     // Construir mensaje
     const weekRange = `${format(weekStart, 'd', { locale: es })} - ${format(weekEnd, 'd \'de\' MMMM', { locale: es })}`;
 
-    let message = `📊 *RESUMEN SEMANAL*\n`;
+    let message = `📊 *RESUMEN SEMANAL — San Fernando*\n`;
     message += `Semana del ${weekRange}\n\n`;
 
     // Sección: Completados esta semana
-    message += `✅ *COMPLETADOS ESTA SEMANA* (${completedThisWeek.length})\n`;
+    message += `✅ *COMPLETADOS* (${completedThisWeek.length})\n`;
     if (completedThisWeek.length === 0) {
       message += `   No se completaron pendientes esta semana.\n\n`;
     } else {
       completedThisWeek.slice(0, 8).forEach(req => {
-        message += `   • ${req.client} - ${req.description.substring(0, 40)}${req.description.length > 40 ? '...' : ''}\n`;
+        message += `   • ${req.client} — ${req.description.substring(0, 40)}${req.description.length > 40 ? '...' : ''}\n`;
       });
       if (completedThisWeek.length > 8) {
         message += `   ... y ${completedThisWeek.length - 8} más\n`;
@@ -183,7 +183,7 @@ async function main() {
     if (overdue.length > 0) {
       message += `🔴 *Atrasados* (${overdue.length})\n`;
       overdue.forEach(req => {
-        message += `   • ${req.client} - ${formatDaysLeft(req.deadline)}\n`;
+        message += `   • ${req.client} — ${formatDaysLeft(req.deadline)}\n`;
       });
       message += '\n';
     }
@@ -192,7 +192,7 @@ async function main() {
     if (dueNextWeek.length > 0) {
       message += `🟡 *Próxima semana* (${dueNextWeek.length})\n`;
       dueNextWeek.slice(0, 5).forEach(req => {
-        message += `   • ${req.client} - ${formatDaysLeft(req.deadline)}\n`;
+        message += `   • ${req.client} — ${formatDaysLeft(req.deadline)}\n`;
       });
       if (dueNextWeek.length > 5) {
         message += `   ... y ${dueNextWeek.length - 5} más\n`;
@@ -204,7 +204,7 @@ async function main() {
     if (dueLater.length > 0) {
       message += `🟢 *Más adelante* (${dueLater.length})\n`;
       dueLater.slice(0, 3).forEach(req => {
-        message += `   • ${req.client} - ${formatDaysLeft(req.deadline)}\n`;
+        message += `   • ${req.client} — ${formatDaysLeft(req.deadline)}\n`;
       });
       if (dueLater.length > 3) {
         message += `   ... y ${dueLater.length - 3} más\n`;
@@ -214,8 +214,8 @@ async function main() {
 
     // Estadísticas
     message += `---\n`;
-    message += `📈 *Esta semana:* ${completedThisWeek.length} completados\n`;
-    message += `📉 *Pendientes:* ${pendingRequests.length} (${overdue.length} atrasados)\n\n`;
+    message += `📈 *Completados:* ${completedThisWeek.length}\n`;
+    message += `📉 *Pendientes:* ${pendingRequests.length}${overdue.length > 0 ? ` (${overdue.length} atrasados)` : ''}\n\n`;
 
     // Frase motivacional
     message += getRandomWeekendPhrase();

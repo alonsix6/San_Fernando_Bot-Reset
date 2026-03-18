@@ -49,7 +49,7 @@ export default function SearchFilter({
             {/* Search Input */}
             <div className="flex-1 relative">
               <label htmlFor="search-pendientes" className="sr-only">
-                Buscar pendientes por cliente, descripción o persona
+                Buscar pendientes por proyecto, descripción o persona
               </label>
               <Search
                 size={14}
@@ -62,7 +62,7 @@ export default function SearchFilter({
                 type="search"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Buscar por cliente, descripción, persona..."
+                placeholder="Buscar por proyecto, descripción, persona..."
                 className="input-lcd w-full pl-9 pr-8 py-2 text-xs"
                 aria-describedby={searchQuery ? "search-results" : undefined}
               />
@@ -94,7 +94,7 @@ export default function SearchFilter({
                 >
                   <option value="deadline">Deadline</option>
                   <option value="priority">Prioridad</option>
-                  <option value="client">Cliente</option>
+                  <option value="client">Proyecto</option>
                   <option value="created">Creado</option>
                 </select>
               </div>
