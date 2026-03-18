@@ -2,9 +2,8 @@ name: Daily Reminder
 
 on:
   schedule:
-    # Cron: 14:00 UTC = 09:00 Lima (UTC-5)
-    # Ejecutar de Lunes a Viernes
-    - cron: '0 14 * * 1-5'
+    # 13:00 UTC = 08:00 AM Lima (UTC-5) — Todos los días
+    - cron: '0 13 * * *'
   workflow_dispatch: # Permite ejecución manual para testing
 
 jobs:
