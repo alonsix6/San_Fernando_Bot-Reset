@@ -193,11 +193,11 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-0.5">Bot de Telegram</p>
-                  <p className="text-xs font-bold text-gray-800">@Research_Pedidos_bot</p>
+                  <p className="text-xs font-bold text-gray-800">@SanFernando_Reset_bot</p>
                 </div>
               </div>
               <a
-                href="https://t.me/Research_Pedidos_bot"
+                href="https://t.me/SanFernando_Reset_bot"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 rounded text-[10px] font-bold uppercase tracking-wider transition-all"

@@ -665,15 +665,15 @@ export default function DashboardPage() {
           <span>TIP: Presiona Alt+/ para ver los atajos de teclado</span>
         </div>
         <a
-          href="https://t.me/Research_Pedidos_bot"
+          href="https://t.me/SanFernando_Reset_bot"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 text-[10px] hover:text-[#024b98] transition-colors"
           style={{ color: '#595959' }}
-          aria-label="Abrir bot de Telegram @Research_Pedidos_bot en nueva ventana"
+          aria-label="Abrir bot de Telegram @SanFernando_Reset_bot en nueva ventana"
         >
           <MessageSquare size={12} aria-hidden="true" />
-          @Research_Pedidos_bot
+          @SanFernando_Reset_bot
         </a>
       </footer>
 
