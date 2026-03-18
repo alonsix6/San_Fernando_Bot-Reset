@@ -40,10 +40,10 @@ function PortIndicator({ label, isActive = false }: { label: string; isActive?: 
         className="px-2 py-0.5 rounded-sm text-center"
         style={{
           background: isActive
-            ? 'linear-gradient(180deg, #FF5722 0%, #FF4500 100%)'
+            ? 'linear-gradient(180deg, #0960b8 0%, #024b98 100%)'
             : 'linear-gradient(180deg, #4A4A4A 0%, #3A3A3A 100%)',
           boxShadow: isActive
-            ? '0 2px 0 #CC3700, inset 0 1px 0 rgba(255,255,255,0.2)'
+            ? '0 2px 0 #01396e, inset 0 1px 0 rgba(255,255,255,0.2)'
             : '0 2px 0 #2A2A2A, inset 0 1px 0 rgba(255,255,255,0.1)',
           color: 'white',
           fontSize: '8px',

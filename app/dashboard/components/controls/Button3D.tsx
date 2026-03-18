@@ -82,7 +82,7 @@ export function SquareButton({
              shadow-[0_3px_0_#CCC,0_4px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.8)]
              hover:from-white hover:to-[#F8F8F8]`
         }
-        ${active ? 'ring-2 ring-[#FF4500] ring-offset-1 ring-offset-[#C8C8C8]' : ''}
+        ${active ? 'ring-2 ring-[#024b98] ring-offset-1 ring-offset-[#C8C8C8]' : ''}
       `}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.95, y: 2 }}

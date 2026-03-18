@@ -37,7 +37,7 @@ export default function SearchFilter({
           exit={{ opacity: 0, y: -10, height: 0 }}
           className="overflow-hidden"
           role="search"
-          aria-label="Búsqueda y filtros de pedidos"
+          aria-label="Búsqueda y filtros de pendientes"
         >
           <div
             className="flex items-center gap-3 p-3 rounded-md mb-4"
@@ -48,8 +48,8 @@ export default function SearchFilter({
           >
             {/* Search Input */}
             <div className="flex-1 relative">
-              <label htmlFor="search-pedidos" className="sr-only">
-                Buscar pedidos por cliente, descripción o persona
+              <label htmlFor="search-pendientes" className="sr-only">
+                Buscar pendientes por cliente, descripción o persona
               </label>
               <Search
                 size={14}
@@ -58,7 +58,7 @@ export default function SearchFilter({
               />
               <input
                 ref={inputRef}
-                id="search-pedidos"
+                id="search-pendientes"
                 type="search"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
@@ -90,7 +90,7 @@ export default function SearchFilter({
                   value={settings.sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof settings.sortBy)}
                   className="input-lcd py-1.5 px-2 text-[10px] min-w-[90px]"
-                  aria-label="Ordenar pedidos por"
+                  aria-label="Ordenar pendientes por"
                 >
                   <option value="deadline">Deadline</option>
                   <option value="priority">Prioridad</option>
@@ -135,7 +135,7 @@ export default function SearchFilter({
               aria-live="polite"
             >
               <span>Buscando:</span>
-              <span className="px-2 py-0.5 rounded bg-[#FF4500]/20 text-[#FF4500]">
+              <span className="px-2 py-0.5 rounded bg-[#024b98]/20 text-[#024b98]">
                 &quot;{searchQuery}&quot;
               </span>
             </motion.div>

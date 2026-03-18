@@ -14,7 +14,7 @@ const config: Config = {
         'op1-card': '#FFFFFF',
         'op1-text': '#2A2A2A',
         'op1-text-secondary': '#666666',
-        'op1-accent': '#FF4500',
+        'op1-accent': '#024b98',
         'op1-success': '#00CC66',
         'op1-warning': '#FFA500',
         'op1-button': '#3A3A3A',

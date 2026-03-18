@@ -1,5 +1,8 @@
 // Tipos para las tablas de Supabase
 
+export const AREAS = ['Reset', 'McCann', 'San Fernando'] as const;
+export type Area = typeof AREAS[number];
+
 export type UserRole = 'analyst' | 'assistant' | 'coordinator' | 'practicante';
 
 export type RequestStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';

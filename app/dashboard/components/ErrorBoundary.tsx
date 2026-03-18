@@ -50,7 +50,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
       return (
         <div className="lcd-screen p-8 text-center" role="alert">
-          <AlertTriangle size={48} className="mx-auto mb-4 text-[#FF4500]" />
+          <AlertTriangle size={48} className="mx-auto mb-4 text-[#024b98]" />
           <h2 className="lcd-number text-lg mb-2">ERROR</h2>
           <p className="text-[#949494] text-sm mb-4">
             Algo salió mal. Por favor intenta de nuevo.

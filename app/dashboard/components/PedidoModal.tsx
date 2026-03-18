@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { modalOverlayVariants, modalContentVariants, springs } from '@/lib/animations';
-import { Request } from '@/lib/types';
+import { Request, AREAS } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 import { calculatePriority } from '@/lib/utils';
 import { X, Briefcase, FileText, User, Calendar, Send, Loader2 } from 'lucide-react';
@@ -11,11 +11,6 @@ import Button3D from './controls/Button3D';
 import CalendarPicker from './controls/CalendarPicker';
 
 const TEAM_ID = process.env.NEXT_PUBLIC_TEAM_ID;
-
-interface ModalUser {
-  id: string;
-  name: string;
-}
 
 interface PedidoModalProps {
   isOpen: boolean;
@@ -31,7 +26,6 @@ export default function PedidoModal({
   editingRequest,
 }: PedidoModalProps) {
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<ModalUser[]>([]);
   const [formData, setFormData] = useState({
     client: '',
     description: '',
@@ -68,7 +62,6 @@ export default function PedidoModal({
 
   useEffect(() => {
     if (isOpen) {
-      loadUsers();
       if (editingRequest) {
         setFormData({
           client: editingRequest.client,
@@ -83,17 +76,6 @@ export default function PedidoModal({
       }
     }
   }, [isOpen, editingRequest]);
-
-  async function loadUsers() {
-    let query = supabase.from('users').select('id, name').order('name');
-    if (TEAM_ID) {
-      query = query.eq('team_id', TEAM_ID);
-    }
-    const { data } = await query;
-    if (data) {
-      setUsers(data);
-    }
-  }
 
   function resetForm() {
     setFormData({
@@ -165,7 +147,7 @@ export default function PedidoModal({
       } else {
         const { error } = await supabase.from('requests').insert({
           ...requestData,
-          created_by: users[0]?.id || null,
+          created_by: null,
           ...(TEAM_ID && { team_id: TEAM_ID }),
         });
 
@@ -177,7 +159,7 @@ export default function PedidoModal({
       resetForm();
     } catch (err) {
       console.error('Error saving request:', err);
-      setErrors({ submit: 'Error al guardar el pedido. Intenta de nuevo.' });
+      setErrors({ submit: 'Error al guardar el pendiente. Intenta de nuevo.' });
     } finally {
       setLoading(false);
     }
@@ -371,9 +353,9 @@ export default function PedidoModal({
                       className="input-lcd w-full"
                     >
                       <option value="">Sin asignar</option>
-                      {users.map((user) => (
-                        <option key={user.id} value={user.id}>
-                          {user.name}
+                      {AREAS.map((area) => (
+                        <option key={area} value={area}>
+                          {area}
                         </option>
                       ))}
                     </select>
@@ -479,13 +461,13 @@ function FormField({
       transition={{ duration: 0.2 }}
     >
       <label htmlFor={id} className="flex items-center gap-2 mb-1.5">
-        {icon && <span style={{ color: '#FF4500' }} aria-hidden="true">{icon}</span>}
+        {icon && <span style={{ color: '#024b98' }} aria-hidden="true">{icon}</span>}
         <span
           className="text-[10px] uppercase tracking-wider font-medium"
           style={{ color: error ? '#E53935' : '#949494' }}
         >
           {label}
-          {required && <span className="text-[#FF4500] ml-0.5" aria-hidden="true">*</span>}
+          {required && <span className="text-[#024b98] ml-0.5" aria-hidden="true">*</span>}
           {required && <span className="sr-only"> (requerido)</span>}
         </span>
       </label>

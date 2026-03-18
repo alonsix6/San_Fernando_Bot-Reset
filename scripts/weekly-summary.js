@@ -1,7 +1,7 @@
 /**
  * Script de resumen semanal para el bot de Telegram
  * Se ejecuta los viernes a las 3PM Lima (20:00 UTC) via GitHub Actions
- * Envía un resumen de la semana: pedidos completados y pendientes
+ * Envía un resumen de la semana: completados y pendientes
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -104,7 +104,7 @@ async function main() {
     const weekStart = startOfWeek(now, { weekStartsOn: 1 }); // Lunes
     const weekEnd = endOfWeek(now, { weekStartsOn: 1 }); // Domingo
 
-    // Obtener pedidos completados esta semana
+    // Obtener completados esta semana
     let completedQuery = supabase
       .from('requests')
       .select('*')
@@ -123,7 +123,7 @@ async function main() {
       throw new Error(`Error fetching completed requests: ${completedError.message}`);
     }
 
-    // Obtener pedidos pendientes
+    // Obtener pendientes activos
     let pendingQuery = supabase
       .from('requests')
       .select('*')
@@ -165,7 +165,7 @@ async function main() {
     // Sección: Completados esta semana
     message += `✅ *COMPLETADOS ESTA SEMANA* (${completedThisWeek.length})\n`;
     if (completedThisWeek.length === 0) {
-      message += `   No se completaron pedidos esta semana.\n\n`;
+      message += `   No se completaron pendientes esta semana.\n\n`;
     } else {
       completedThisWeek.slice(0, 8).forEach(req => {
         message += `   • ${req.client} - ${req.description.substring(0, 40)}${req.description.length > 40 ? '...' : ''}\n`;

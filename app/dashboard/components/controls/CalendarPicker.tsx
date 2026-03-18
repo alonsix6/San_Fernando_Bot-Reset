@@ -228,7 +228,7 @@ export default function CalendarPicker({
                         ? 'var(--te-orange)'
                         : 'transparent',
                       boxShadow: isSelected
-                        ? '0 0 8px rgba(255, 69, 0, 0.4)'
+                        ? '0 0 8px rgba(2, 75, 152, 0.4)'
                         : 'none',
                       cursor: isDisabled ? 'not-allowed' : 'pointer',
                     }}

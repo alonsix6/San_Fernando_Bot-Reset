@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { ConversationStep, NewRequestData, CompleteRequestData } from './types';
+import { ConversationStep, NewRequestData, CompleteRequestData, AREAS } from './types';
 
 const TEAM_ID = process.env.TEAM_ID;
 
@@ -93,33 +93,40 @@ export async function clearConversationState(
  * Mensajes del flujo conversacional
  */
 export const conversationMessages = {
-  start: '📝 *Nuevo pedido para el equipo*\n\n¿Para qué *cliente/cuenta*?',
+  start: '📝 *Nuevo pendiente para el equipo*\n\n¿Para qué *cliente/cuenta*?',
 
   client: (client: string) =>
-    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pedido)`,
+    `✅ Cliente: *${client}*\n\n¿Qué necesitan exactamente? (Describe el pendiente)`,
 
   description: (desc: string) =>
-    `✅ Pedido: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
+    `✅ Pendiente: ${desc}\n\n¿Quién lo solicitó? (Nombre y cargo, ej: "Andrea, ejecutiva")`,
 
   requester: (requester: string) =>
     `✅ Solicitante: ${requester}\n\n¿Fecha de entrega?\nPuedes usar:\n• Fecha: "25/12" o "25/12/2024"\n• Relativo: "hoy", "mañana", "en 3 días"`,
 
-  deadline: (deadline: string, formatted: string) =>
-    `✅ Deadline: ${formatted}\n\n¿Quién se encarga?\n1️⃣ Sol\n2️⃣ Estef\n3️⃣ Alonso\n4️⃣ Mellanie\n5️⃣ Sin asignar\n\nResponde con el número.`,
+  deadline: (deadline: string, formatted: string) => {
+    const emojis = ['1️⃣', '2️⃣', '3️⃣'];
+    let assignOptions = '';
+    AREAS.forEach((area, i) => {
+      assignOptions += `${emojis[i]} ${area}\n`;
+    });
+    assignOptions += `${AREAS.length + 1}️⃣ Sin asignar`;
+    return `✅ Deadline: ${formatted}\n\n¿Quién se encarga?\n${assignOptions}\n\nResponde con el número.`;
+  },
 
   summary: (data: NewRequestData, assigned: string, priority: string, emoji: string) => {
     const parts = data.requester_name?.split(',') || ['', ''];
     const name = parts[0]?.trim() || data.requester_name;
     const role = parts[1]?.trim() || '';
 
-    return `✅ *Pedido creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPedido: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pedido ha sido guardado y todos pueden verlo con /ver`;
+    return `✅ *Pendiente creado!*\n\n📋 *Resumen:*\nCliente: ${data.client}\nPendiente: ${data.description}\nSolicitante: ${name}${role ? ` (${role})` : ''}\nDeadline: ${data.deadline}\nAsignado: ${assigned}\nPrioridad: ${emoji} ${priority}\n\n✨ El pendiente ha sido guardado y todos pueden verlo con /ver`;
   },
 
-  cancel: '❌ Pedido cancelado. Usa /nuevopedido cuando quieras crear uno nuevo.',
+  cancel: '❌ Pendiente cancelado. Usa /nuevopendiente cuando quieras crear uno nuevo.',
 
   error: '⚠️ No entendí esa respuesta. Por favor intenta de nuevo.',
 
   invalidDate: '⚠️ No pude entender esa fecha. Usa formatos como:\n• "25/12" o "25/12/2024"\n• "hoy", "mañana"\n• "en 3 días"',
 
-  invalidAssignment: '⚠️ Por favor responde con 1, 2, 3, 4 o 5.',
+  invalidAssignment: `⚠️ Por favor responde con un número del 1 al ${AREAS.length + 1}.`,
 };

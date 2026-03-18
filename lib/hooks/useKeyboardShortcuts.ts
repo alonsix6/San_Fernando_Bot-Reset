@@ -82,7 +82,7 @@ export function createDashboardShortcuts({
       key: 'n',
       alt: true,
       action: onNewRequest,
-      description: 'Nuevo pedido',
+      description: 'Nuevo pendiente',
     },
     {
       key: 'r',
@@ -93,7 +93,7 @@ export function createDashboardShortcuts({
     {
       key: 'Escape',
       action: onCloseModal,
-      description: 'Cerrar modal/dialogo',
+      description: 'Cerrar modal/diálogo',
     },
     {
       key: 'k',
@@ -124,7 +124,7 @@ export function createDashboardShortcuts({
 
 // Shortcut help data for display
 export const shortcutsList = [
-  { key: 'Alt + N', description: 'Nuevo pedido' },
+  { key: 'Alt + N', description: 'Nuevo pendiente' },
   { key: 'Alt + R', description: 'Refrescar datos' },
   { key: 'Esc', description: 'Cerrar modal' },
   { key: 'Alt + K', description: 'Buscar' },

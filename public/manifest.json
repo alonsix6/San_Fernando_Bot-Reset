@@ -1,11 +1,11 @@
 {
-  "name": "Reset R&A - Sistema de Pedidos",
-  "short_name": "Reset Pedidos",
-  "description": "Sistema de gestión de pedidos para el equipo de Research & Analytics de Reset",
+  "name": "San Fernando - Sistema de Pendientes",
+  "short_name": "San Fernando",
+  "description": "Sistema de gestión de pendientes - San Fernando",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#1A1A1A",
-  "theme_color": "#FF4500",
+  "theme_color": "#024b98",
   "orientation": "any",
   "icons": [
     {

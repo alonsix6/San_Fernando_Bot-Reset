@@ -61,7 +61,7 @@ export function LCDNumber({
 export function LCDLabel({ children, color = 'white' }: { children: ReactNode; color?: 'white' | 'orange' | 'cyan' }) {
   const colorStyle = {
     white: '#E5E5E5',
-    orange: '#FF4500',
+    orange: '#024b98',
     cyan: '#00D4FF',
   }[color];
 
